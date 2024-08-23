@@ -5,3 +5,6 @@
 /src/SystemuserClient/SystemuserClient/.vs
 /src/SystemuserClient/SystemuserClient/bin/Debug/net8.0
 /src/SystemuserClient/SystemuserClient/obj
+/src/SystemUserApi/SystemUserApi/.vs/SystemUserApi
+/src/SystemUserApi/SystemUserApi/bin/Debug/net8.0
+/src/SystemUserApi/SystemUserApi/obj
