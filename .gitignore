@@ -8,3 +8,5 @@
 /src/SystemUserApi/SystemUserApi/.vs/SystemUserApi
 /src/SystemUserApi/SystemUserApi/bin/Debug/net8.0
 /src/SystemUserApi/SystemUserApi/obj
+/src/SystemUserApi/SystemUserApi/bin/Release/net8.0
+/src/SystemUserApi/SystemUserApi/Properties/PublishProfiles
