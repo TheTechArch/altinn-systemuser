@@ -25,9 +25,9 @@ namespace SystemUserApi.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet]
-        public SystemUserClaim Get()
+        public SystemUserClaim? Get()
         {
-            SystemUserClaim systemUser = SystemUserUtil.GetSystemUser(_httpContextAccessor.HttpContext);
+            SystemUserClaim? systemUser = SystemUserUtil.GetSystemUser(_httpContextAccessor.HttpContext);
             return systemUser;
         }
     }

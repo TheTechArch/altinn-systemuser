@@ -35,16 +35,19 @@ namespace SystemUserApi.Utils
         /// </summary>
         /// <param name="context">the http context</param>
         /// <returns>System user object from token</returns>
-        public static SystemUserClaim? GetSystemUser(HttpContext context)
+        public static SystemUserClaim? GetSystemUser(HttpContext? context)
         {
-            var claim = context.User?.Claims.FirstOrDefault(c => c.Type.Equals(SystemUserConstants.AuthorizationDetails));
-            if (claim != null)
+            if (context != null)
             {
-                string jwtSystemUSerClaim = claim.Value;
+                var claim = context.User?.Claims.FirstOrDefault(c => c.Type.Equals(SystemUserConstants.AuthorizationDetails));
+                if (claim != null)
+                {
+                    string jwtSystemUSerClaim = claim.Value;
 
-                SystemUserClaim? jwtSystemUserClaims = JsonSerializer.Deserialize<SystemUserClaim>(jwtSystemUSerClaim);
+                    SystemUserClaim? jwtSystemUserClaims = JsonSerializer.Deserialize<SystemUserClaim>(jwtSystemUSerClaim);
 
-                return jwtSystemUserClaims;
+                    return jwtSystemUserClaims;
+                }
             }
 
             return null;

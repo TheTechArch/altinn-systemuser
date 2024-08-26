@@ -10,11 +10,11 @@ namespace Altinn.ApiClients.Maskinporten.Interfaces
         /// <summary>
         /// Generates a Maskinporten access token using a JsonWebKey
         /// </summary>
-        Task<TokenResponse> GetToken(JsonWebKey jwk, string environment, string clientId, string scope, string resource, string systemUserOrg);
+        Task<TokenResponse?> GetToken(JsonWebKey jwk, string environment, string clientId, string scope, string systemUserOrg);
 
         /// <summary>
         /// Generates a Maskinporten access token using a base64encoded JsonWebKey
         /// </summary>
-        Task<TokenResponse> GetToken(string base64EncodedJWK, string environment, string clientId, string scope, string resource, string systemUserOrg);
+        Task<TokenResponse?> GetToken(string base64EncodedJWK, string environment, string clientId, string scope, string systemUserOrg);
     }
 }

@@ -2,13 +2,15 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 using Altinn.ApiClients.Maskinporten.Interfaces;
 
 namespace Altinn.ApiClients.Maskinporten.Services
 {
+    /// <summary>
+    /// This service is responsible for creatingen a SystemUser Maskinporten token using a JsonWebKey
+    /// </summary>
     public class MaskinportenService: IMaskinportenService
     {
         private readonly HttpClient _client;
@@ -19,18 +21,37 @@ namespace Altinn.ApiClients.Maskinporten.Services
             _client = httpClient;
         }
 
-        public async Task<TokenResponse> GetToken(string base64EncodedJwk, string environment, string clientId, string scope, string resource, string systemUserOrgno)
+        /// <summary>
+        /// Creates a Maskinporten token using a base64 encoded JsonWebKey
+        /// </summary>
+        /// <param name="base64EncodedJwk"></param>
+        /// <param name="environment"></param>
+        /// <param name="clientId"></param>
+        /// <param name="scope"></param>
+        /// <param name="systemUserOrgno"></param>
+        /// <returns></returns>
+        public async Task<TokenResponse?> GetToken(string base64EncodedJwk, string environment, string clientId, string scope, string systemUserOrgno)
         {
             byte[] base64EncodedBytes = Convert.FromBase64String(base64EncodedJwk);
             string jwkjson = Encoding.UTF8.GetString(base64EncodedBytes);
             JsonWebKey jwk = new JsonWebKey(jwkjson);
-            return await GetToken(jwk, environment, clientId, scope, resource, systemUserOrgno);
+            return await GetToken(jwk, environment, clientId, scope, systemUserOrgno);
         }
 
-        public async Task<TokenResponse> GetToken(JsonWebKey jwk, string environment, string clientId, string scope, string resource, string systemUserOrgno)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jwk"></param>
+        /// <param name="environment"></param>
+        /// <param name="clientId"></param>
+        /// <param name="scope"></param>
+        /// <param name="resource"></param>
+        /// <param name="systemUserOrgno"></param>
+        /// <returns></returns>
+        public async Task<TokenResponse?> GetToken(JsonWebKey jwk, string environment, string clientId, string scope, string systemUserOrgno)
         {
-            TokenResponse accesstokenResponse;
-            string jwtAssertion = GetJwtAssertion(jwk, environment, clientId, scope, resource, systemUserOrgno);
+            TokenResponse? accesstokenResponse;
+            string jwtAssertion = GetJwtAssertion(jwk, environment, clientId, scope, systemUserOrgno);
             FormUrlEncodedContent content = GetUrlEncodedContent(jwtAssertion);
             accesstokenResponse = await PostToken(environment, content);
             return accesstokenResponse;
@@ -46,11 +67,14 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <param name="resource"></param>
         /// <param name="systemUserOrgno"></param>
         /// <returns></returns>
-        public string GetJwtAssertion(JsonWebKey jwk, string environment, string clientId, string scope, string resource, string systemUserOrgno)
+        private string GetJwtAssertion(JsonWebKey jwk, string environment, string clientId, string scope, string systemUserOrgno)
         {
             DateTimeOffset dateTimeOffset = new DateTimeOffset(DateTime.UtcNow);
+
+            /// Create the JWT header with signature using the JWK. This is the code that create proof that client has private key for the Integration in Maskinporten
             JwtHeader header = GetHeader(jwk);
 
+            /// Create the JWT payload in JWT Grant. This is the same content as a regular Maskinporten token
             JwtPayload payload = new JwtPayload
             {
                 { "aud", GetAssertionAud(environment) },
@@ -61,33 +85,29 @@ namespace Altinn.ApiClients.Maskinporten.Services
                 { "jti", Guid.NewGuid().ToString() },
             };
            
-            
+            /// Add the authorization_details in JWT Grant to support systemuser if systemUserOrgno is provided
             if(systemUserOrgno != null)
             {
+                /// Add the systemuser_org in the authorization_details. This is the organization that has created a connection between their system user and the system in Altinn System Register
                 JwtPayload systemUserOrg = new JwtPayload
                 {
                     { "authority", "iso6523-actorid-upis" },
                     { "ID", $"0192:{systemUserOrgno}" },
                 };
 
-                    JwtPayload authorizationDetail = new JwtPayload()
+                /// Add the authorization_details in JWT Grant to support systemuser
+                JwtPayload authorizationDetail = new JwtPayload()
                 {
                     { "systemuser_org", systemUserOrg },
                     { "type" , "urn:altinn:systemuser"}
                 };
 
-                    List<JwtPayload> authorizationDetails = new List<JwtPayload>
+                List<JwtPayload> authorizationDetails = new List<JwtPayload>
                 {
                     authorizationDetail
                 };
 
                 payload.Add("authorization_details", authorizationDetails);
-            }
-
-
-            if (!string.IsNullOrEmpty(resource))
-            {
-                payload.Add("resource", resource);
             }
 
             JwtSecurityToken securityToken = new JwtSecurityToken(header, payload);
@@ -112,7 +132,14 @@ namespace Altinn.ApiClients.Maskinporten.Services
             return formContent;
         }
 
-        public async Task<TokenResponse> PostToken(string environment, FormUrlEncodedContent bearer)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="environment"></param>
+        /// <param name="bearer"></param>
+        /// <returns></returns>
+        /// <exception cref="TokenRequestException"></exception>
+        private async Task<TokenResponse?> PostToken(string environment, FormUrlEncodedContent bearer)
         {
             HttpRequestMessage requestMessage = new HttpRequestMessage()
             {
@@ -137,7 +164,7 @@ namespace Altinn.ApiClients.Maskinporten.Services
                               (string.IsNullOrEmpty(errorResponse) ? "<empty>" : errorResponse)
             };
 
-            // _logger.LogError("errorType={errorType} description={description} statuscode={statusCode}", error.ErrorType, error.Description, response.StatusCode);
+            Console.Write(error.ToString());
             throw new TokenRequestException(error.Description);
         }
 
