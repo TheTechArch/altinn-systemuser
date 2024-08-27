@@ -5,7 +5,7 @@ using SystemUserApi.Models;
 namespace SystemUserApi.Utils
 {
     /// <summary>
-    /// Util class for 
+    /// Util class for systemuserAPI 
     /// </summary>
     public static class SystemUserUtil
     {
