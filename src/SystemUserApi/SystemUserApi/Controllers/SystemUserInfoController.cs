@@ -8,6 +8,9 @@ using SystemUserApi.Utils;
 
 namespace SystemUserApi.Controllers
 {
+    /// <summary>
+    /// API to demonstrate Altinn SystemUser 
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SystemUserInfoController : ControllerBase
@@ -20,7 +23,7 @@ namespace SystemUserApi.Controllers
         }
 
         /// <summary>
-        /// Demonstrates how to get the system user from the context
+        /// Demonstrates how to get the system user from the context. The endpoint is protected with [Authorize] attribute making sure that a valid bearer token from Maskinporten is required to access the endpoint.
         /// </summary>
         /// <returns></returns>
         [Authorize]

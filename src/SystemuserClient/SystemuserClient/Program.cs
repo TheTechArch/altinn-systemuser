@@ -1,8 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Altinn.ApiClients.Maskinporten.Models;
 using Altinn.ApiClients.Maskinporten.Services;
+using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using SystemUserApi.Models;
 
 /// <summary>   
@@ -15,23 +18,41 @@ using SystemUserApi.Models;
 /// 3. You need to have a system in Altinn Systemregister that is registrated on this test organization with the clientId for the integration just created. Contact Altinn for this. You need to define which resource to use
 /// 4. You need a client organization that will create a systemUser and connect to the system in step 3.
 /// 5. Log in as admin 
+/// 
+
+string clientID = "7ee41fce-9f6e-4c32-8195-0fe2c1517f43";
+string scope = "altinn:systembruker.demo";
+string systemUserOrg = "210493352";
+
+
+//var cert = new X509Certificate2(@".\CertPublicKey.cer");
+
+// Load PEM certificate
+string pemCertificatePath = @".\mp-key.pem";
+var pem = File.ReadAllText(pemCertificatePath);
+
+var rsa = RSA.Create();
+rsa.ImportFromPem(pem.ToCharArray());
+
+var privRsa = new RsaSecurityKey(rsa.ExportParameters(true)) { KeyId = "650a4snb5f" };
+var privJwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(privRsa);
+
 
 HttpClient httpClient = new HttpClient();
 MaskinportenService maskinportenService = new MaskinportenService(httpClient);
 
-// Read JWK created in step 2
+// Read JWK created in step. By default uses the base64 encoded JWK in testjwk.b64 as part of this repo
 string filePath = @"testjwk.b64";
 string fileContent = File.ReadAllText(filePath);
 
 // Request system user token for Maskinporten test environment with ClientID from 2. 
-TokenResponse? systemUserToken = await maskinportenService.GetToken(fileContent, "test", "9fe38c9a-8177-4697-997c-0618eb6213c3", "altinn:instances.read", "210493352");
+TokenResponse? systemUserToken = await maskinportenService.GetToken(privJwk, "test", clientID, scope, systemUserOrg);
 
 if(systemUserToken == null)
 {
     Console.WriteLine("Not able to generate token");
     return;
 }
-
 
 /// Set up call to SystemUserInfo API
 /// In a real world scenario this would be a call to a system that requires system user that performs business logic

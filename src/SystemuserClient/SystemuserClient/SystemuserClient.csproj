@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="mp-key.pem">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="testjwk.b64">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
