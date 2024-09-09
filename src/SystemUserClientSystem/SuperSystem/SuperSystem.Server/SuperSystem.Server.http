@@ -1,0 +1,6 @@
+@SuperSystem.Server_HostAddress = http://localhost:5076
+
+GET {{SuperSystem.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
