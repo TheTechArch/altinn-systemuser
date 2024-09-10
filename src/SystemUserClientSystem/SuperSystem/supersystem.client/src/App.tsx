@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import { Card } from '@digdir/designsystemet-react';
 
 interface Forecast {
     date: string;
@@ -43,6 +44,11 @@ function App() {
             <h1 id="tableLabel">Weather forecast</h1>
             <p>This component demonstrates fetching data from the server.</p>
             {contents}
+            <Card>
+                <Card.Header>Tittel</Card.Header>
+                <Card.Content>Innhold</Card.Content>
+                <Card.Footer>Valgfri fotnote</Card.Footer>
+            </Card>
         </div>
     );
 
