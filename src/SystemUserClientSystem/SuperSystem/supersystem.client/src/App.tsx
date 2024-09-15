@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import './tailwind.css';
 import { Card } from '@digdir/designsystemet-react';
 
 interface Forecast {
@@ -42,6 +43,9 @@ function App() {
     return (
         <div>
             <h1 id="tableLabel">Weather forecast</h1>
+            <h1 class="text-1xl font-bold underline">
+                Hello world!
+            </h1>
             <p>This component demonstrates fetching data from the server.</p>
             {contents}
             <Card>
