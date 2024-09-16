@@ -23,12 +23,11 @@ using SystemUserApi.Models;
 string clientID = "7ee41fce-9f6e-4c32-8195-0fe2c1517f43";
 string scope = "altinn:systembruker.demo";
 string systemUserOrg = "210493352";
-
+string pemCertificatePath = @".\mp-key.pem";
 
 //var cert = new X509Certificate2(@".\CertPublicKey.cer");
 
 // Load PEM certificate
-string pemCertificatePath = @".\mp-key.pem";
 var pem = File.ReadAllText(pemCertificatePath);
 
 var rsa = RSA.Create();
@@ -36,7 +35,6 @@ rsa.ImportFromPem(pem.ToCharArray());
 
 var privRsa = new RsaSecurityKey(rsa.ExportParameters(true)) { KeyId = "650a4snb5f" };
 var privJwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(privRsa);
-
 
 HttpClient httpClient = new HttpClient();
 MaskinportenService maskinportenService = new MaskinportenService(httpClient);
