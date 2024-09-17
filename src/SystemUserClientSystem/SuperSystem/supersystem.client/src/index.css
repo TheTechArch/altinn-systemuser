@@ -2,12 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 .bg-smartcloud {
   background-color: rgb(12, 84, 115);
 }
 
 .bg-smartcloudbright {
     background-color: rgb(222, 241, 245);
+}
+
+.font-color-cloudblue {
+    color: #0C5473;
 }
