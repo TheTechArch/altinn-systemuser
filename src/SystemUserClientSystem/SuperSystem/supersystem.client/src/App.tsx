@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import './tailwind.css';
+import imagelogo from './assets/illustration.jpg';
+import smartlogo from './assets/SmartCloudLogo.png';
 import { Card } from '@digdir/designsystemet-react';
 
 interface Forecast {
@@ -41,52 +43,61 @@ function App() {
         </table>;
 
     return (
-        <div className="bg-amber-400">
-            <h1 id="tableLabel">Weather forecast</h1>
+        <div>
             <div className="min-h-screen bg-gray-100">
                 {/* Hero Section */}
-                <header className="bg-blue-600 text-white">
-                    <div className="container mx-auto px-4 py-12 text-center">
-                        <h1 className="text-4xl font-bold mb-4">Smart Cloud AS</h1>
-                        <p className="text-xl mb-6">Norges ledende programvarepakke for foretningstøtte</p>
-                        <a
-                            href="#features"
-                            className="bg-white text-blue-600 px-6 py-3 rounded-lg shadow-md hover:bg-blue-500 hover:text-white transition"
-                        >
-                            Lær mer
-                        </a>
+                <header className="bg-smartcloud text-white">
+                    <div className="container mx-auto px-4 py-12 overflow-auto">
+                        <img src={smartlogo} alt="Smart Cloud Logo" className="w-auto mx-auto mb-4 float-left h-24"  />
+                        <div className="float-right">
+                            <button className="text-blue-600 px-4 py-2 rounded-lg shadow-md hover:bg-blue-500 hover:text-white transition mr-2">Login</button>
+                            <button className="bg-white text-blue-600 px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Register</button>
+                        </div>
                     </div>
                 </header>
-
-                {/* Features Section */}
-                <section id="features" className="py-12">
+                {/* About Section */} 
+                <section id="about" className="py-12 bg-white">
                     <div className="container mx-auto px-4">
-                        <h2 className="text-3xl font-bold text-center mb-8">Funksjonalitet</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <div className="bg-white shadow-lg p-6 rounded-lg">
-                                <h3 className="text-xl font-semibold mb-4">Full Altinn støtte </h3>
-                                <p>Vårt system er fullintegrerert med Altinn og med bruk av systembruker for virksomheter kan du fokusere på andre ting, mens våre system gjør jobben.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+                            <div>
+                                <img src={imagelogo} alt="Illustration" />
                             </div>
-                            <div className="bg-white shadow-lg p-6 rounded-lg">
-                                <h3 className="text-xl font-semibold mb-4">Smart Regnskap</h3>
+                            <div>
+                                <h2 className="text-6xl">Jobb smartere med SmartCloud</h2>
+                                <p className="text-xl">Med SmartCloud får du jobben gjort på dine egne premisser. Vårt system er fullt integrert med Altinn, noe som gjør at du kan fokusere på andre ting, mens dine egne tilpassede moduler gjør jobben.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                {/* Features Section */}
+                <section id="features" className="py-12 bg-white">
+                    <div className="container mx-auto px-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                           
+                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
+                                <h3 className="text-xl font-semibold mb-4">SmartRegnskap</h3>
                                 <p>Vår regnskapsmodul holder oversikt på inntekter og utgifter.
                                 Aldri mer vil krav og betalinger komme som en overraskelse.</p>
                             </div>
-                            <div className="bg-white shadow-lg p-6 rounded-lg">
-                                <h3 className="text-xl font-semibold mb-4">Smart HR</h3>
+                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
+                                <h3 className="text-xl font-semibold mb-4">SmartHR</h3>
                                 <p>Med våre HR modul får du god oppfølging av dine ansatte. Den innebygde AI assistenten holder kontakten med ansatte som er syk og gir en rask oppfølging.</p>
                             </div>
-                            <div className="bg-white shadow-lg p-6 rounded-lg">
-                                <h3 className="text-xl font-semibold mb-4">Smart CRM</h3>
+                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
+                                <h3 className="text-xl font-semibold mb-4">SmartLønn</h3>
+                                <p>Trenger du enkel modul som holder oversikt over lønnsutbetalingene til dine ansatte? Med Smart Lønn får du full oversikt over utbetalinger.</p>
+                            </div>
+                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
+                                <h3 className="text-xl font-semibold mb-4">SmartCRM</h3>
                                 <p>Vår CRM modul gir deg full oversikt over dine kunder. Automatisk oppfølging via AI. Enkel import av kundedatabase fra andre CRM løsninger</p>
                             </div>
-                            <div className="bg-white shadow-lg p-6 rounded-lg">
-                                <h3 className="text-xl font-semibold mb-4">Smart Fleet</h3>
+                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
+                                <h3 className="text-xl font-semibold mb-4">SmartFleet</h3>
                                 <p>Hold oversikt over din bedrifts bilpark. Når skal man på service? Trenger bilen lades? Vår
                                 flåtemodul gir deg full oversikt.</p>
                             </div>
-                            <div className="bg-white shadow-lg p-6 rounded-lg">
-                                <h3 className="text-xl font-semibold mb-4">Smart Logistikk</h3>
+                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
+                                <h3 className="text-xl font-semibold mb-4">SmartLogistikk</h3>
                                 <p>Smart Logikstikkmodulen gjør deg til en vinner på markedet. Vår Logi AI støtte optimaliserer all transport av varer med fokus på pris og kvalitet.
                                 Vår predektive AI sikrer at varene er fremme i akkurat samme øyeblikk som du innser du må bestille. </p>
                             </div>
@@ -95,7 +106,7 @@ function App() {
                 </section>
 
                 {/* Call to Action Section */}
-                <section className="bg-blue-600 text-white py-12">
+                <section className="bg-smartcloud text-white py-12">
                     <div className="container mx-auto px-4 text-center">
                         <h2 className="text-3xl font-bold mb-4">Kom i gang i dag</h2>
                         <p className="text-lg mb-6">Registrer deg i dag og få 3 mnd gratis tilgang</p>
