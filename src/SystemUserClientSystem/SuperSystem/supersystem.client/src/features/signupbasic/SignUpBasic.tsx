@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import './SignUpBasic.css';
 import './../../tailwind.css';
-import imagelogo from './../../assets/illustration.jpg';
 import smartlogo from './../../assets/SmartCloudLogo.svg';
+import { Textfield, Button } from '@digdir/designsystemet-react';
+
+import '@digdir/designsystemet-theme';
+import '@digdir/designsystemet-css';
 
 export const SignUpBasic = () => {
 
@@ -23,23 +26,47 @@ export const SignUpBasic = () => {
                         </div>
                     </div>
                 </header>
-                {/* About Section */} 
-                <section id="about" className="py-12 bg-white">
-                    <div className="container mx-auto px-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-                            <div>
-                                <img src={imagelogo} alt="Illustration" />
-                            </div>
-                            <div>
-                                <h2 className="text-6xl font-semibold font-color-cloudblue py-4">Jobb smartere med SmartCloud</h2>
-                                <p className="text-xl py-4">Med SmartCloud får du jobben gjort på dine egne premisser. Vårt system er fullt integrert med Altinn, noe som gjør at du kan fokusere på andre ting, mens dine egne tilpassede moduler gjør jobben.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
                 {/* Features Section */}
                 <section id="features" className="py-12 bg-white">
+                    <div className="container mx-auto px-4 text-center">
+                    <Textfield
+                        description=""
+                        error=""
+                        label="Firmnavn"
+                        size="md"
+                    />
+                    <Textfield
+                        description=""
+                        error=""
+                        label="Organisasjonsnummer"
+                        size="md"
+                    />
 
+                    <Textfield
+                    description=""
+                        error=""
+                        label="E-post"
+                        size="md"
+                        />
+
+
+                        <Textfield
+                            description=""
+                            error=""
+                            label="Kontaptperson"
+                            size="md"
+                        />
+
+                        <Button
+                            color="first"
+                            size="md"
+                            variant="primary"
+
+                        >
+                            Knapp
+                        </Button>
+
+                        </div>
                 </section>
 
                 {/* Call to Action Section */}
