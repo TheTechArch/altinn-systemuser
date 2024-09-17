@@ -4,8 +4,6 @@ import './../../tailwind.css';
 import imagelogo from './../../assets/illustration.jpg';
 import smartlogo from './../../assets/SmartCloudLogo.svg';
 import { Link } from 'react-router-dom';
-
-import { List } from '@digdir/designsystemet-react';
 import { CheckmarkIcon } from '@navikt/aksel-icons';
 
 import '@digdir/designsystemet-theme';
