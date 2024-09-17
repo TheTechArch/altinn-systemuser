@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import './LandingPage.css';
+import './SignUpBasic.css';
 import './../../tailwind.css';
 import imagelogo from './../../assets/illustration.jpg';
 import smartlogo from './../../assets/SmartCloudLogo.svg';
 
-export const LandingPage = () => {
+export const SignUpBasic = () => {
 
 
     useEffect(() => {
@@ -39,38 +39,7 @@ export const LandingPage = () => {
                 </section>
                 {/* Features Section */}
                 <section id="features" className="py-12 bg-white">
-                    <div className="container mx-auto px-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                           
-                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
-                                <h3 className="text-xl font-semibold mb-4">SmartRegnskap</h3>
-                                <p>Vår regnskapsmodul holder oversikt på inntekter og utgifter.
-                                Aldri mer vil krav og betalinger komme som en overraskelse.</p>
-                            </div>
-                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
-                                <h3 className="text-xl font-semibold mb-4">SmartHR</h3>
-                                <p>Med våre HR modul får du god oppfølging av dine ansatte. Den innebygde AI assistenten holder kontakten med ansatte som er syk og gir en rask oppfølging.</p>
-                            </div>
-                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
-                                <h3 className="text-xl font-semibold mb-4">SmartLønn</h3>
-                                <p>Trenger du enkel modul som holder oversikt over lønnsutbetalingene til dine ansatte? Med Smart Lønn får du full oversikt over utbetalinger.</p>
-                            </div>
-                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
-                                <h3 className="text-xl font-semibold mb-4">SmartCRM</h3>
-                                <p>Vår CRM modul gir deg full oversikt over dine kunder. Automatisk oppfølging via AI. Enkel import av kundedatabase fra andre CRM løsninger</p>
-                            </div>
-                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
-                                <h3 className="text-xl font-semibold mb-4">SmartFleet</h3>
-                                <p>Hold oversikt over din bedrifts bilpark. Når skal man på service? Trenger bilen lades? Vår
-                                flåtemodul gir deg full oversikt.</p>
-                            </div>
-                            <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl">
-                                <h3 className="text-xl font-semibold mb-4">SmartLogistikk</h3>
-                                <p>Smart Logikstikkmodulen gjør deg til en vinner på markedet. Vår Logi AI støtte optimaliserer all transport av varer med fokus på pris og kvalitet.
-                                Vår predektive AI sikrer at varene er fremme i akkurat samme øyeblikk som du innser du må bestille. </p>
-                            </div>
-                        </div>
-                    </div>
+
                 </section>
 
                 {/* Call to Action Section */}
