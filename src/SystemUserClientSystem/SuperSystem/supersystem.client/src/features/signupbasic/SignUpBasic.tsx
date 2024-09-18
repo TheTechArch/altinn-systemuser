@@ -2,10 +2,12 @@ import { useEffect } from 'react';
 import './SignUpBasic.css';
 import './../../tailwind.css';
 import smartlogo from './../../assets/SmartCloudLogo.svg';
-import { Textfield, Button } from '@digdir/designsystemet-react';
+import { Textfield, Checkbox } from '@digdir/designsystemet-react';
+import { Link } from 'react-router-dom';
 
 import '@digdir/designsystemet-theme';
 import '@digdir/designsystemet-css';
+import { CheckmarkIcon } from '@navikt/aksel-icons';
 
 export const SignUpBasic = () => {
 
@@ -27,59 +29,65 @@ export const SignUpBasic = () => {
                     </div>
                 </header>
                 {/* Features Section */}
-                <section id="features" className="py-12 bg-white">
-                    <div className="container mx-auto px-4 text-center">
-                    <Textfield
-                        description=""
-                        error=""
-                        label="Firmnavn"
-                        size="md"
-                    />
-                    <Textfield
-                        description=""
-                        error=""
-                        label="Organisasjonsnummer"
-                        size="md"
-                    />
+                <section id="features" className="bg-white ">
+                    <div className="container mx-auto px-24 py-24">
+                        <div className="mb-12 bg-smartcloudbright shadow-lg">
+                            <div className="text-center">
+                                <h2 className="text-3xl font-semibold mb-2 text-center p-4">Du har valgt pakken SmartBasic</h2>
+                                <p>Med SmartBasic får du tilgang til SmartRegnkap med alt du trenger for å holde orden på regnskapet</p>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 ">
+                                <div className="container mx-auto px-4 text-center py-4">
+                                    <Textfield
+                                        description=""
+                                        error=""
+                                        label="Firmnavn"
+                                        size="md"
+                                    />
+                                    <Textfield
+                                        description=""
+                                        error=""
+                                        label="Organisasjonsnummer"
+                                        size="md"
+                                    />
+                                    <Textfield
+                                    description=""
+                                        error=""
+                                        label="E-post"
+                                        size="md"
+                                        />
+                                    <Textfield
+                                        description=""
+                                        error=""
+                                        label="Kontaktperson"
+                                        size="md"
+                                    />
+                                    <Checkbox
+                                        description="Les vilkårene her"
+                                        size="md"
+                                        value="value"
+                                    >
+                                       Jeg godtar betingelsene til SmartCloud AS
+                                    </Checkbox>
+                                    <br />
 
-                    <Textfield
-                    description=""
-                        error=""
-                        label="E-post"
-                        size="md"
-                        />
-
-
-                        <Textfield
-                            description=""
-                            error=""
-                            label="Kontaptperson"
-                            size="md"
-                        />
-
-                        <Button
-                            color="first"
-                            size="md"
-                            variant="primary"
-
-                        >
-                            Knapp
-                        </Button>
-
+                                    <Link to="/signupbasic" className="bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-semibold mb-4">SmartBasic</h3>
+                                    <CheckmarkIcon title="a11y-title" className="inline w-6 h-6 font-color-cloudbluelight" fontSize="1.5rem" /> SmartRegnskap<br />
+                                    <CheckmarkIcon title="a11y-title" className="inline w-6 h-6 font-color-cloudbluelight" fontSize="1.5rem" /> Systemtilgang i Altinn<br />
+                                    <br />
+                                    Prøv gratis i tre måneder!
+                                    </div>
+                            </div>
                         </div>
+                    </div>
                 </section>
 
                 {/* Call to Action Section */}
                 <section className="bg-smartcloud text-white py-12">
                     <div className="container mx-auto px-4 text-center">
-                        <h2 className="text-3xl font-bold mb-4">Kom i gang i dag</h2>
-                        <p className="text-lg mb-6">Registrer deg i dag og få 3 mnd gratis tilgang</p>
-                        <a
-                            href="#"
-                            className="bg-white text-blue-600 px-6 py-3 rounded-lg shadow-md hover:bg-blue-500 hover:text-white transition"
-                        >
-                            Registrer deg
-                        </a>
                     </div>
                 </section>
 
