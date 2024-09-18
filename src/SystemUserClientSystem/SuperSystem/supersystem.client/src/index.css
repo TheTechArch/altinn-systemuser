@@ -10,6 +10,14 @@
     background-color: rgb(222, 241, 245);
 }
 
+.bg-smartcloudbluelight {
+    background-color: #07A0BA;
+}
+
 .font-color-cloudblue {
     color: #0C5473;
+}
+
+.font-color-cloudbluelight {
+    color: #07A0BA;
 }
