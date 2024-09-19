@@ -5,6 +5,8 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using Altinn.ApiClients.Maskinporten.Interfaces;
 using Altinn.ApiClients.Maskinporten.Services;
+using SuperSystem.Server.Services;
+using SuperSystem.Server.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,11 +20,8 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -43,4 +42,6 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSwaggerGen();
     services.Configure<MaskinportenConfig>(config.GetSection("Maskinporten"));
     services.AddHttpClient<IMaskinportenService, MaskinportenService>();
+    services.AddHttpClient<ITokenExchange, TokenExchange>();
+    services.AddHttpClient<ISystemUser, SystemuserService>();  
 }

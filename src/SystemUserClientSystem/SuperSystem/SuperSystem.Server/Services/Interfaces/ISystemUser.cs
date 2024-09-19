@@ -4,6 +4,6 @@ namespace SuperSystem.Server.Services.Interfaces
 {
     public interface ISystemUser
     {
-        Task<CreateRequestSystemUserResponse> CreateSystemUserRequest(CreateRequestSystemUser registerSystemRequest);
+        Task<CreateRequestSystemUserResponse> CreateSystemUserRequest(CreateRequestSystemUser registerSystemRequest, string token);
     }
 }
