@@ -26,21 +26,28 @@ namespace SuperSystem.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] string? systemUserOrg)
         {
             string? certificate = _maskinportenConfig.Cert;
             byte[] certificateBytes = Convert.FromBase64String(certificate);
             string decodedCertificate = Encoding.UTF8.GetString(certificateBytes);
-            string scope = "altinn:systembruker.demo";
-            string systemUserOrg = "210493352";
+            string scope = string.Empty;
 
             string clientId = _maskinportenConfig.ClientId;
-
+            
+            if(systemUserOrg == null)
+            {
+                scope = _maskinportenConfig.RequestSystemUserScope;
+            }
+            else
+            {
+                scope = _maskinportenConfig.SystemUserScope;
+            }
 
             var rsa = RSA.Create();
             rsa.ImportFromPem(decodedCertificate.ToCharArray());
 
-            var privRsa = new RsaSecurityKey(rsa.ExportParameters(true)) { KeyId = "650a4snb5f" };
+            var privRsa = new RsaSecurityKey(rsa.ExportParameters(true)) { KeyId = _maskinportenConfig.KeyId };
             var privJwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(privRsa);
 
             HttpClient httpClient = new HttpClient();
