@@ -1,7 +1,9 @@
-﻿namespace SuperSystem.Server.Services.Interfaces
+﻿using SuperSystem.Server.Models;
+
+namespace SuperSystem.Server.Services.Interfaces
 {
     public interface ISystemUser
     {
-        Task CreateSystemUserRequest();
+        Task<CreateRequestSystemUserResponse> CreateSystemUserRequest(CreateRequestSystemUser registerSystemRequest);
     }
 }

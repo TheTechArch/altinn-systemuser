@@ -3,6 +3,7 @@
 namespace SuperSystem.Server.Controllers
 {
     [Route("[controller]")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class RedirectController : Controller
     {
         public IActionResult Index()

@@ -1,11 +1,16 @@
+using Microsoft.Extensions.Logging;
+using SuperSystem.Server.Config;
+using SuperSystem.Server.Controllers;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Altinn.ApiClients.Maskinporten.Interfaces;
+using Altinn.ApiClients.Maskinporten.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+ConfigureServices(builder.Services, builder.Configuration);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Add services to the container.
 
 var app = builder.Build();
 
@@ -26,5 +31,16 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
-
 app.Run();
+
+
+
+void ConfigureServices(IServiceCollection services, IConfiguration config)
+{
+    services.AddControllers();
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
+    services.Configure<MaskinportenConfig>(config.GetSection("Maskinporten"));
+    services.AddHttpClient<IMaskinportenService, MaskinportenService>();
+}
