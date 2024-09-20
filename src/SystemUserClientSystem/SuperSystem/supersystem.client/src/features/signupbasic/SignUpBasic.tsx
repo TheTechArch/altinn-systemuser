@@ -37,7 +37,7 @@ export const SignUpBasic = () => {
                                 <p>Med SmartBasic får du tilgang til SmartRegnkap med alt du trenger for å holde orden på regnskapet</p>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 ">
-                                <div className="container mx-auto px-4 text-center py-4">
+                                <div className="container mx-auto px-4 py-4">
                                     <Textfield
                                         description=""
                                         error=""
@@ -71,7 +71,8 @@ export const SignUpBasic = () => {
                                     </Checkbox>
                                     <br />
 
-                                    <Link to="/signupbasic" className="bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
+                                    <Link to="/complete" className="bg-smartcloudbluelight px-4 py-2 rounded-3xl text-white shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
+                                    <br /><br />
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-semibold mb-4">SmartBasic</h3>
@@ -95,7 +96,7 @@ export const SignUpBasic = () => {
                 {/* Footer */}
                 <footer className="bg-gray-800 text-white py-6">
                     <div className="container mx-auto px-4 text-center">
-                        <p>&copy; {new Date().getFullYear()} Smart Cloud AS. All rights reserved.</p>
+                        <p>&copy; {new Date().getFullYear()} SmartCloud AS. All rights reserved.</p>
                     </div>
                 </footer>
             </div>

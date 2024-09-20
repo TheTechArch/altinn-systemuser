@@ -11,6 +11,7 @@ using SuperSystem.Server.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace SuperSystem.Server.Controllers
 {
@@ -66,8 +67,8 @@ namespace SuperSystem.Server.Controllers
                     {
                         Resource = [new AttributePair() { Id = "urn:altinn:resource", Value = "kravogbetaling" }]
                     }
-                }
-
+                },
+                RedirectUrl = "https://smartcloudaltinn.azurewebsites.net/receipt"
             };
 
             CreateRequestSystemUserResponse createRequestSystemUserResponse = await  _systemUser.CreateSystemUserRequest(createSystemUserRequest, altinntoken);
