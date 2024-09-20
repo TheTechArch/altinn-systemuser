@@ -32,7 +32,7 @@ export const Dashboard = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-8">
                             <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl font-color-cloudblue">
                                 <h3 className="text-xl font-semibold mb-4">Aktive saker i Altinn</h3>
-                                <Table zebra="True">
+                                <Table zebra={true} className="w-full">
                                     <Table.Head>
                                         <Table.Row>
                                             <Table.HeaderCell>
@@ -49,7 +49,7 @@ export const Dashboard = () => {
                                     <Table.Body>
                                         <Table.Row>
                                             <Table.Cell>
-                                                Statistikk over arbeidforhjold
+                                                Statistikk over arbeidsforh
                                             </Table.Cell>
                                             <Table.Cell>
                                                 SSB
@@ -60,13 +60,13 @@ export const Dashboard = () => {
                                         </Table.Row>
                                         <Table.Row>
                                             <Table.Cell>
-                                                Cell 1
+                                               Reelle rettighetshavere
                                             </Table.Cell>
                                             <Table.Cell>
-                                                Cell 2
+                                               Brønnøysundregistrene
                                             </Table.Cell>
                                             <Table.Cell>
-                                                Cell 3
+                                                Under utfylling
                                             </Table.Cell>
                                         </Table.Row>
                                     </Table.Body>
@@ -77,6 +77,7 @@ export const Dashboard = () => {
                 </section>
                 <section id="features" className="py-12 bg-white">
                     <div className="container mx-auto px-4">
+                        <h3 className="text-xl font-semibold mb-4">SmartCloud Moduler</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
 
                             <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl font-color-cloudblue">
@@ -97,9 +98,15 @@ export const Dashboard = () => {
                                 <p>Trenger du enkel modul som holder oversikt over lønnsutbetalingene til dine ansatte? Med Smart Lønn får du full oversikt over utbetalinger.</p>
                             </div>
                             <div className="bg-smartcloudbright shadow-lg p-6 rounded-2xl font-color-cloudblue">
-                                <h3 className="text-xl font-semibold mb-4">SmartCRM</h3>
-                                <p>Vår CRM modul gir deg full oversikt over dine kunder. Automatisk oppfølging via AI. Enkel import av kundedatabase fra andre CRM løsninger</p>
-                            </div>
+                                <h3 className="text-xl font-semibold mb-4">Sykefravær</h3>
+                                <ul>
+                                    <li>Denne uke: 3.8%</li>
+                                    <li>Langtidsykemeldte: 2</li>
+                                </ul>
+                                <br />
+                                <Link to="/signupbasic" className="text-white bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Gå til oversikt</Link>
+
+                                      </div>
                         </div>
                     </div>
                 </section>

@@ -39,7 +39,7 @@ export const Receipt = () => {
                                 <h3>SmartCloud</h3>
 
                                 <br />
-                                <Link to="/signupbasic" className="text-white bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Gå til SmartCloud Dashboard</Link>
+                                <Link to="/dashboard" className="text-white bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Gå til SmartCloud Dashboard</Link>
                                 </div>
                             
                         </div>
