@@ -101,7 +101,7 @@ export const LandingPage = () => {
                                 <CheckmarkIcon title="a11y-title" className="inline w-6 h-6 font-color-cloudbluelight" fontSize="1.5rem" /> Systemtilgang i Altinn<br />
                                 <br />
                                 <br />
-                                <b>kr 609,- pr. mnd</b><br /><br />
+                                <b>kr 609 pr. mnd</b><br /><br />
                                 <Link to="/signupbasic" className="bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
                             </div>
                             <div className="p-2">
@@ -111,7 +111,7 @@ export const LandingPage = () => {
                                 <CheckmarkIcon title="a11y-title" className="inline w-6 h-6 font-color-cloudbluelight" fontSize="1.5rem" /> SmartHR<br />
                                 <CheckmarkIcon title="a11y-title" className="inline w-6 h-6 font-color-cloudbluelight" fontSize="1.5rem" /> Systemtilgang i Altinn<br />
                                 <br />
-                                <b>kr 930,- pr. mnd</b><br /><br />
+                                <b>kr 930 pr. mnd</b><br /><br />
                                 <Link to="/signupbasic" className="bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
                             </div>
                             <div className="p-2">
@@ -121,9 +121,8 @@ export const LandingPage = () => {
                                 <CheckmarkIcon title="a11y-title" className="inline w-6 h-6 font-color-cloudbluelight" fontSize="1.5rem" /> SmartFleet og SmartLogistikk<br />
                                 <CheckmarkIcon title="a11y-title" className="inline w-6 h-6 font-color-cloudbluelight" fontSize="1.5rem" /> Systemtilgang i Altinn <br />
                                 <br />
-                                <b>kr 1.409,- pr. mnd</b><br /><br />
+                                <b>kr 1.409 pr. mnd</b><br /><br />
                                 <Link to="/signupbasic" className="bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
-
                                 <br />
                             </div>
                         </div>

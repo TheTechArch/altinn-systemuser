@@ -4,13 +4,14 @@ import './../../tailwind.css';
 import smartlogo from './../../assets/SmartCloudLogo.svg';
 import { Textfield, Checkbox } from '@digdir/designsystemet-react';
 import { Link } from 'react-router-dom';
-
+import { useState } from 'react';
 import '@digdir/designsystemet-theme';
 import '@digdir/designsystemet-css';
 import { CheckmarkIcon } from '@navikt/aksel-icons';
 
 export const SignUpBasic = () => {
-
+    const [firmaNavn, setFirmaNavn] = useState<string | undefined>(undefined);
+    const [organisasjonsNr, setOrganisasjonsNr] = useState<string | undefined>(undefined);
 
     useEffect(() => {
     }, []);
@@ -41,20 +42,25 @@ export const SignUpBasic = () => {
                                     <Textfield
                                         description=""
                                         error=""
-                                        label="Firmnavn"
+                                        label="Firmanavn"
                                         size="md"
+                                        value={firmaNavn}
+                                        onBlur={(e) => setFirmaNavn(e.target.value)}
                                     />
                                     <Textfield
                                         description=""
                                         error=""
                                         label="Organisasjonsnummer"
                                         size="md"
+                                        value={organisasjonsNr}
+                                        onBlur={(e) => setOrganisasjonsNr(e.target.value)}
                                     />
                                     <Textfield
                                     description=""
                                         error=""
                                         label="E-post"
                                         size="md"
+                                       
                                         />
                                     <Textfield
                                         description=""
@@ -71,7 +77,7 @@ export const SignUpBasic = () => {
                                     </Checkbox>
                                     <br />
 
-                                    <Link to="/complete" className="bg-smartcloudbluelight px-4 py-2 rounded-3xl text-white shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
+                                    <Link to={`/complete?organisajonsnr=${organisasjonsNr}`} className="bg-smartcloudbluelight px-4 py-2 rounded-3xl text-white shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
                                     <br /><br />
                                 </div>
                                 <div>

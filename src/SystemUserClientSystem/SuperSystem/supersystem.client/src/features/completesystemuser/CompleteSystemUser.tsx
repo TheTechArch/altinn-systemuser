@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom'; 
 import './CompleteSystemUser.css';
 import './../../tailwind.css';
 import smartlogo from './../../assets/SmartCloudLogo.svg';
@@ -7,11 +7,9 @@ import '@digdir/designsystemet-theme';
 import '@digdir/designsystemet-css';
 
 export const CompleteSystemUser = () => {
-
-
-    useEffect(() => {
-    }, []);
-
+    const [urlParams] = useSearchParams();
+    const orgnr = urlParams.get('organisajonsnr');
+    
     return (
         <div>
             <div className="min-h-screen bg-gray-100">
@@ -39,7 +37,7 @@ export const CompleteSystemUser = () => {
                                 <p className="text-xl font-color-cloudblue">For å kunne godkjenne systemtilgang trenger du rollen<br /> Hovedadministrator, Tilgangstyrer eller Daglig leder.</p>
                                 <br /><br />
 
-                                <a href="/Redirect?systemuserorg=314048431" className="bg-smartcloudbluelight px-4 py-2 text-white rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Kom i gang</a>
+                                <a href={`/Redirect?systemuserorg=${orgnr}`} className="bg-smartcloudbluelight px-4 py-2 text-white rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Kom i gang</a>
 
                                 <br />
                             </div>
@@ -65,4 +63,3 @@ export const CompleteSystemUser = () => {
         </div>
     );
 }
-
