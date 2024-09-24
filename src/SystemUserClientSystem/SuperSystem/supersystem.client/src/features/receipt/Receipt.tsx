@@ -19,7 +19,7 @@ export const Receipt = () => {
                 {/* Hero Section */}
                 <header className="bg-smartcloud text-white">
                     <div className="container mx-auto px-4 py-12 overflow-auto">
-                        <img src={smartlogo} alt="Smart Cloud Logo" className="w-auto mx-auto mb-2 float-left h-28"  />
+                        <a href="/"><img src={smartlogo} alt="Smart Cloud Logo" className="w-auto mx-auto mb-2 inline h-28" /></a>
                         <div className="float-right pt-16">
                             <button className="text-white px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition mr-2">Logg inn</button>
                             <button className="bg-white text-blue-600 px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Prøv gratis</button>
