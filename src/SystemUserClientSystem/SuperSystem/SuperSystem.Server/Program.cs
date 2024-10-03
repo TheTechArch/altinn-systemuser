@@ -41,7 +41,9 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen();
     services.Configure<MaskinportenConfig>(config.GetSection("Maskinporten"));
+    services.Configure<KravOgBetalingerConfig>(config.GetSection("KravOgBetalinger"));
     services.AddHttpClient<IMaskinportenService, MaskinportenService>();
     services.AddHttpClient<ITokenExchange, TokenExchange>();
-    services.AddHttpClient<ISystemUser, SystemuserService>();  
+    services.AddHttpClient<ISystemUser, SystemuserService>();
+    services.AddHttpClient<IKravOgBetalinger, KravOgBetalingerService>();
 }

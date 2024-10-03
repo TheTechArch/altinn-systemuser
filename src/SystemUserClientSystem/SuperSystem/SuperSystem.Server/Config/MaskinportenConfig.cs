@@ -10,7 +10,7 @@
         /// <summary>
         /// The clientId
         /// </summary>
-        public string? ClientId { get; set;  }
+        public required string ClientId { get; set;  }
 
         /// <summary>
         /// The consumer
@@ -36,5 +36,10 @@
         /// Scope for maskinporten client when calling API as system user. This will vary depending on the API the system user need to call
         /// </summary>
         public string? SystemUserScope { get; set;  }
+
+        /// <summary>
+        /// Base 64 Encoded JWK
+        /// </summary>
+        public required string EncodedJwk { get; set;  }
     }
 }

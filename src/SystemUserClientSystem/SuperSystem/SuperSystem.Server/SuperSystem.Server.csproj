@@ -7,6 +7,7 @@
     <SpaRoot>..\supersystem.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
+    <UserSecretsId>72dd460e-b808-4d71-9b1d-23749098354a</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
