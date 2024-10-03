@@ -21,7 +21,7 @@ namespace SuperSystem.Server.Controllers
         }
 
         [HttpGet("aapnekrav")]
-        public async Task<IActionResult> GetAapneKrav([FromQuery] string orgno, [FromQuery] DateOnly? from, [FromQuery] DateOnly? to, [FromQuery] string? correlation)
+        public async Task<IActionResult> GetAapneKrav([FromQuery] string orgno, [FromQuery] string? from, [FromQuery] string? to, [FromQuery] string? correlation)
         {
 
             AapneKrav? kravOgBetalinger = await _kravOgBetalingerService.GetAapneKrav(orgno, from, to, correlation);
@@ -29,7 +29,7 @@ namespace SuperSystem.Server.Controllers
         }
 
         [HttpGet("utbetalinger")]
-        public async Task<IActionResult> GetUtbetalinger([FromQuery] string orgno, [FromQuery] DateOnly? from, [FromQuery] DateOnly? to, [FromQuery] string? correlation)
+        public async Task<IActionResult> GetUtbetalinger([FromQuery] string orgno, [FromQuery] string? from, [FromQuery] string? to, [FromQuery] string? correlation)
         {
 
             Utbetalinger? kravOgBetalinger = await _kravOgBetalingerService.GetUtbetalinger(orgno, from, to, correlation);
@@ -37,7 +37,7 @@ namespace SuperSystem.Server.Controllers
         }
 
         [HttpGet("innbetalinger")]
-        public async Task<IActionResult> GetInnbetalinger([FromQuery] string orgno, [FromQuery] DateOnly? from, [FromQuery] DateOnly? to, [FromQuery] string? correlation)
+        public async Task<IActionResult> GetInnbetalinger([FromQuery] string orgno, [FromQuery] string? from, [FromQuery] string? to, [FromQuery] string? correlation)
         {
 
             Innbetalinger? innbetalinger = await _kravOgBetalingerService.GetInnbetalinger(orgno, from, to, correlation);
@@ -45,7 +45,7 @@ namespace SuperSystem.Server.Controllers
         }
 
         [HttpGet("krav")]
-        public async Task<IActionResult> GetKravOgBetalinger([FromQuery] string orgno, [FromQuery] DateOnly? from, [FromQuery] DateOnly? to, [FromQuery] string? correlation)
+        public async Task<IActionResult> GetKravOgBetalinger([FromQuery] string orgno, [FromQuery] string from, [FromQuery] string? to, [FromQuery] string? correlation)
         {
             Krav? krav = await _kravOgBetalingerService.GetKrav(orgno, from, to, correlation);
             return Ok(krav);

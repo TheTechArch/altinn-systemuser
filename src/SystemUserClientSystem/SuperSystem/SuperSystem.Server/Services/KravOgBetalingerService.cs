@@ -27,7 +27,7 @@ namespace SuperSystem.Server.Services
             _maskinportenConfig = maskinportenConfig.Value;
         }
 
-        public async Task<AapneKrav?> GetAapneKrav(string orgno, DateOnly? from, DateOnly? to, string? correlation)
+        public async Task<AapneKrav?> GetAapneKrav(string orgno, string? from, string? to, string? correlation)
         {
             TokenResponse? tokenResponse = await _maskinportenService.GetToken(_maskinportenConfig.EncodedJwk, "test",_maskinportenConfig.ClientId, _kravOgBetalingerConfig.Scope, orgno);
             if (tokenResponse?.AccessToken == null)
@@ -41,7 +41,7 @@ namespace SuperSystem.Server.Services
             return aapneKrav;
         }
 
-        public async Task<Innbetalinger?> GetInnbetalinger(string orgno, DateOnly? from, DateOnly? to, string? correlation)
+        public async Task<Innbetalinger?> GetInnbetalinger(string orgno, string? from, string? to, string? correlation)
         {
             TokenResponse? tokenResponse = await _maskinportenService.GetToken(_maskinportenConfig.EncodedJwk, "test", _maskinportenConfig.ClientId, _kravOgBetalingerConfig.Scope, orgno);
             
@@ -56,7 +56,7 @@ namespace SuperSystem.Server.Services
             return innbetalinger;
         }
 
-        public async Task<Krav?> GetKrav(string orgno, DateOnly from, DateOnly? to, string? correlation)
+        public async Task<Krav?> GetKrav(string orgno, string from, string? to, string? correlation)
         {
             TokenResponse? tokenResponse = await _maskinportenService.GetToken(_maskinportenConfig.EncodedJwk, "test", _maskinportenConfig.ClientId, _kravOgBetalingerConfig.Scope, orgno);
             if (tokenResponse?.AccessToken == null)
@@ -70,7 +70,7 @@ namespace SuperSystem.Server.Services
             return krav;
         }
 
-        public async Task<Utbetalinger?> GetUtbetalinger(string orgno, DateOnly? from, DateOnly? to, string? correlation)
+        public async Task<Utbetalinger?> GetUtbetalinger(string orgno, string? from, string? to, string? correlation)
         {
             TokenResponse? tokenResponse = await _maskinportenService.GetToken(_maskinportenConfig.EncodedJwk, "test", _maskinportenConfig.ClientId, _kravOgBetalingerConfig.Scope, orgno);
             if (tokenResponse?.AccessToken == null)
@@ -98,18 +98,18 @@ namespace SuperSystem.Server.Services
             return uriBuilder.ToString();
         }
 
-        private Dictionary<string, string> BuildQueryParams(DateOnly? from, DateOnly? to, string? correlation)
+        private Dictionary<string, string> BuildQueryParams(string? from, string? to, string? correlation)
         {
             Dictionary<string, string> queryParams = new Dictionary<string, string>();  
 
-            if(from.HasValue)
+            if(!string.IsNullOrEmpty(from))
             {
-                queryParams.Add("fraOgMed", from.Value.ToString());
+                queryParams.Add("fraOgMed", from);
             }
 
-            if(to.HasValue)
+            if(!string.IsNullOrEmpty(to))
             {
-                queryParams.Add("tilOgMed", to.Value.ToString());
+                queryParams.Add("tilOgMed", to);
             }
 
             if(!string.IsNullOrEmpty(correlation))
