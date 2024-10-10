@@ -39,8 +39,8 @@ namespace SystemAdmin.Services
             _httpClient.BaseAddress = new Uri(_systemRegisterConfig.SystemRegisterBaseAdress);
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {exchangedToken}");
 
-           //HttpResponseMessage response = await _httpClient.PostAsJsonAsync("systemregister/system", request);
-            HttpResponseMessage response = await _httpClient.PutAsJsonAsync("systemregister/system/991825827_smartcloud", request);
+            //HttpResponseMessage response = await _httpClient.PostAsJsonAsync("systemregister/vendor", request);
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync("systemregister/vendor/991825827_smartcloud", request);
           
             string responseText = await response.Content.ReadAsStringAsync();
         }

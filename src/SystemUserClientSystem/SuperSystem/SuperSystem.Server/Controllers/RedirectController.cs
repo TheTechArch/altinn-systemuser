@@ -4,13 +4,13 @@ using Altinn.ApiClients.Maskinporten.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SuperSystem.Server.Config;
-using SuperSystem.Server.Models;
-using SuperSystem.Server.Services.Interfaces;
+using SmartCloud.Server.Config;
+using SmartCloud.Server.Models;
+using SmartCloud.Server.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SuperSystem.Server.Controllers
+namespace SmartCloud.Server.Controllers
 {
     [Route("[controller]")]
     [ApiExplorerSettings(IgnoreApi = true)]
@@ -20,53 +20,45 @@ namespace SuperSystem.Server.Controllers
         private readonly MaskinportenConfig _maskinportenConfig;
         private readonly ITokenExchange _tokenExchange;
         private readonly ISystemUser _systemUser;
+        private readonly SystemRegisterConfig _systemRegisterConfig;
 
-        public RedirectController(IOptions<MaskinportenConfig> maskinportenConfig, IMaskinportenService maskinportenService, ITokenExchange tokenExchange, ISystemUser systemUser)
+        public RedirectController(IOptions<MaskinportenConfig> maskinportenConfig, IMaskinportenService maskinportenService, ITokenExchange tokenExchange, ISystemUser systemUser, IOptions<SystemRegisterConfig> systemRegisterConfig)
         {
             _maskinportenService = maskinportenService;
             _maskinportenConfig = maskinportenConfig.Value;
             _tokenExchange = tokenExchange;
             _systemUser = systemUser;
+            _systemRegisterConfig = systemRegisterConfig.Value;
         }
 
 
-        public async Task<IActionResult> Index([FromQuery] string? systemUserOrg)
+        public async Task<IActionResult> Index([FromQuery] string systemUserOrg)
         {
-            string? certificate = _maskinportenConfig.Cert;
-            byte[] certificateBytes = Convert.FromBase64String(certificate);
-            string decodedCertificate = Encoding.UTF8.GetString(certificateBytes);
-            string scope = string.Empty;
+            string scope = _systemRegisterConfig.RequestSystemUserScope;
 
-            string clientId = _maskinportenConfig.ClientId;
-
-            scope = _maskinportenConfig.RequestSystemUserScope;
-
-            var rsa = RSA.Create();
-            rsa.ImportFromPem(decodedCertificate.ToCharArray());
-
-            var privRsa = new RsaSecurityKey(rsa.ExportParameters(true)) { KeyId = _maskinportenConfig.KeyId };
-            var privJwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(privRsa);
-
-            HttpClient httpClient = new HttpClient();
-            MaskinportenService maskinportenService = new MaskinportenService(httpClient);
-
-            TokenResponse? systemUserToken = await _maskinportenService.GetToken(privJwk, "test", clientId, scope, null);
+            TokenResponse? systemUserToken = await _maskinportenService.GetToken(scope, null);
             string altinntoken = await _tokenExchange.ExhangeMaskinporten(systemUserToken.AccessToken);
 
             CreateRequestSystemUser createSystemUserRequest = new CreateRequestSystemUser()
             {
                 ExternalRef = Guid.NewGuid().ToString(),
                 PartyOrgNo = systemUserOrg,
-                SystemId = "312600757_smartcloud",
-                Rights = new List<Right>()
-                {
-                    new Right()
-                    {
-                        Resource = [new AttributePair() { Id = "urn:altinn:resource", Value = "kravogbetaling" }]
-                    }
-                },
+                SystemId = _systemRegisterConfig.SystemId,
+                Rights = new List<Right>(),
                 RedirectUrl = "https://smartcloudaltinn.azurewebsites.net/receipt"
             };
+
+            string[] resources = _systemRegisterConfig.RightResources.Split(",");
+
+            foreach(string resource in resources){
+                
+                createSystemUserRequest.Rights.Add(new Right()
+                {
+                    Resource = [new AttributePair() { Id = "urn:altinn:resource", Value = resource }]
+                });
+            
+            }
+
 
             CreateRequestSystemUserResponse createRequestSystemUserResponse = await _systemUser.CreateSystemUserRequest(createSystemUserRequest, altinntoken);
 

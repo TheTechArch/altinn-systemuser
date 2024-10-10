@@ -1,22 +1,36 @@
-﻿using SuperSystem.Server.Models;
-using SuperSystem.Server.Services.Interfaces;
+﻿using Microsoft.Extensions.Options;
+using SmartCloud.Server.Config;
+using SmartCloud.Server.Models;
+using SmartCloud.Server.Services.Interfaces;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
-namespace SuperSystem.Server.Services
+namespace SmartCloud.Server.Services
 {
     public class SystemuserService : ISystemUser
     {
         private readonly HttpClient _client;
+
+        private readonly SystemRegisterConfig _systemRegisterConfig;
      
-        public SystemuserService(HttpClient httpClient)
+        public SystemuserService(HttpClient httpClient, IOptions<SystemRegisterConfig> systemRegisterConfig)
         {
             _client = httpClient;
+            _systemRegisterConfig = systemRegisterConfig.Value;
         }
 
         public async Task<CreateRequestSystemUserResponse> CreateSystemUserRequest(CreateRequestSystemUser registerSystemRequest, string token)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            HttpResponseMessage httpResponse = await _client.PostAsJsonAsync("https://platform.at22.altinn.cloud/authentication/api/v1/systemuser/request/vendor", registerSystemRequest);
+            HttpResponseMessage httpResponse = await _client.PostAsJsonAsync(_systemRegisterConfig.BaseAdress + _systemRegisterConfig.RequestSystemUserPath, registerSystemRequest);
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+
+                string body = await httpResponse.Content.ReadAsStringAsync();
+
+            }
+
             return await httpResponse.Content.ReadFromJsonAsync<CreateRequestSystemUserResponse>();
         }
 

@@ -1,12 +1,8 @@
-using Microsoft.Extensions.Logging;
-using SuperSystem.Server.Config;
-using SuperSystem.Server.Controllers;
-using System.Text.Json.Serialization;
-using System.Text.Json;
+using SmartCloud.Server.Config;
 using Altinn.ApiClients.Maskinporten.Interfaces;
 using Altinn.ApiClients.Maskinporten.Services;
-using SuperSystem.Server.Services;
-using SuperSystem.Server.Services.Interfaces;
+using SmartCloud.Server.Services;
+using SmartCloud.Server.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +38,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSwaggerGen();
     services.Configure<MaskinportenConfig>(config.GetSection("Maskinporten"));
     services.Configure<KravOgBetalingerConfig>(config.GetSection("KravOgBetalinger"));
+    services.Configure<SystemRegisterConfig>(config.GetSection("SystemRegister"));
     services.AddHttpClient<IMaskinportenService, MaskinportenService>();
     services.AddHttpClient<ITokenExchange, TokenExchange>();
     services.AddHttpClient<ISystemUser, SystemuserService>();

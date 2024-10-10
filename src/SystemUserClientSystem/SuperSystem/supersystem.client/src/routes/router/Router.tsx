@@ -5,6 +5,7 @@ import { SignUpBasic } from './../../features/signupbasic/SignUpBasic';
 import { CompleteSystemUser } from './../../features/completesystemuser/CompleteSystemUser';
 import { Receipt } from './../../features/receipt/Receipt';
 import { Dashboard } from './../../features/dashboard/Dashboard';
+import { ClientAdmin } from './../../features/clientadmin/ClientAdmin';
 
 export const Router = createBrowserRouter(
     [
@@ -27,6 +28,10 @@ export const Router = createBrowserRouter(
         {
             path: '/dashboard',
             element: <Dashboard />,
+        },
+        {
+            path: '/clientadmin',
+            element: <ClientAdmin />,
         }
     ],
     { basename: '/' },

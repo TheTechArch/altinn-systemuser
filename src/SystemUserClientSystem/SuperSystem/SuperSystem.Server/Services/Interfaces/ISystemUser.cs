@@ -1,6 +1,6 @@
-﻿using SuperSystem.Server.Models;
+﻿using SmartCloud.Server.Models;
 
-namespace SuperSystem.Server.Services.Interfaces
+namespace SmartCloud.Server.Services.Interfaces
 {
     /// <summary>
     /// SystemUser interface with integration functionality for Altinn

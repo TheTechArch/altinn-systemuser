@@ -8,6 +8,6 @@
 
         public string? RegisterSystemEndpoint { get; set;  }
 
-        public string? SystemInfoPath { get; set;  }
+        public string? SystemInfoPath { get; set;  } 
     }
 }

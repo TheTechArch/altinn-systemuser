@@ -1,4 +1,4 @@
-﻿namespace SuperSystem.Server.Models
+﻿namespace SmartCloud.Server.Models
 {
     public record Right
     {

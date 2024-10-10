@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SuperSystem.Server.Config;
-using SuperSystem.Server.Models;
-using SuperSystem.Server.Services.Interfaces;
+using SmartCloud.Server.Config;
+using SmartCloud.Server.Models;
+using SmartCloud.Server.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
 using static System.Net.WebRequestMethods;
 
-namespace SuperSystem.Server.Controllers
+namespace SmartCloud.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -33,28 +33,10 @@ namespace SuperSystem.Server.Controllers
         }
 
         [HttpGet("createsystemuserrequest")]
-        public async Task<IActionResult> CreateSystemUserRequest([FromQuery] string? systemUserOrg)
+        public async Task<IActionResult> CreateSystemUserRequest([FromQuery] string systemUserOrg)
         {
-            string? certificate = _maskinportenConfig.Cert;
-            byte[] certificateBytes = Convert.FromBase64String(certificate);
-            string decodedCertificate = Encoding.UTF8.GetString(certificateBytes);
-            string scope = string.Empty;
+            TokenResponse? systemUserToken = await _maskinportenService.GetToken(_maskinportenConfig.RequestSystemUserScope, null);
 
-            string clientId = _maskinportenConfig.ClientId;
-            
-           scope = _maskinportenConfig.RequestSystemUserScope;
-            
-            var rsa = RSA.Create();
-            rsa.ImportFromPem(decodedCertificate.ToCharArray());
-
-            var privRsa = new RsaSecurityKey(rsa.ExportParameters(true)) { KeyId = _maskinportenConfig.KeyId };
-            var privJwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(privRsa);
-
-            HttpClient httpClient = new HttpClient();
-            MaskinportenService maskinportenService = new MaskinportenService(httpClient);
-
-
-            TokenResponse? systemUserToken = await _maskinportenService.GetToken(privJwk, "test", clientId, scope, null);
             string altinntoken = await _tokenExchange.ExhangeMaskinporten(systemUserToken.AccessToken);
 
             CreateRequestSystemUser createSystemUserRequest = new CreateRequestSystemUser()
@@ -79,9 +61,7 @@ namespace SuperSystem.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string? systemUserOrg)
         {
-            string? certificate = _maskinportenConfig.Cert;
-            byte[] certificateBytes = Convert.FromBase64String(certificate);
-            string decodedCertificate = Encoding.UTF8.GetString(certificateBytes);
+          
             string scope = string.Empty;
 
             string clientId = _maskinportenConfig.ClientId;
@@ -95,17 +75,7 @@ namespace SuperSystem.Server.Controllers
                 scope = _maskinportenConfig.SystemUserScope;
             }
 
-            var rsa = RSA.Create();
-            rsa.ImportFromPem(decodedCertificate.ToCharArray());
-
-            var privRsa = new RsaSecurityKey(rsa.ExportParameters(true)) { KeyId = _maskinportenConfig.KeyId };
-            var privJwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(privRsa);
-
-            HttpClient httpClient = new HttpClient();
-            MaskinportenService maskinportenService = new MaskinportenService(httpClient);
-
-
-            TokenResponse? systemUserToken = await _maskinportenService.GetToken(privJwk, "test", clientId, scope, systemUserOrg);
+            TokenResponse? systemUserToken = await _maskinportenService.GetToken(scope, systemUserOrg);
             string altinntoken = await _tokenExchange.ExhangeMaskinporten(systemUserToken.AccessToken);
             // var jwtHandler = new JwtSecurityTokenHandler();
             // var decodedToken = jwtHandler.ReadJwtToken(systemUserToken.AccessToken);

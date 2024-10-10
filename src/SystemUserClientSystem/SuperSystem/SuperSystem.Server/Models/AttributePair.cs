@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace SuperSystem.Server.Models
+namespace SmartCloud.Server.Models
 {
     public class AttributePair
     {

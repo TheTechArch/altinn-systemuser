@@ -1,6 +1,6 @@
 ﻿using IO.Swagger.Model;
 
-namespace SuperSystem.Server.Services.Interfaces
+namespace SmartCloud.Server.Services.Interfaces
 {
     /// <summary>
     /// Interface for https://skatteetaten.github.io/api-dokumentasjon/api/kravogbetalinger?tab=Test

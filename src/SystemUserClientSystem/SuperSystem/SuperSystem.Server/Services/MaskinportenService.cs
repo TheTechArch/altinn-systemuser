@@ -5,6 +5,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Altinn.ApiClients.Maskinporten.Interfaces;
+using SmartCloud.Server.Config;
+using Microsoft.Extensions.Options;
 
 namespace Altinn.ApiClients.Maskinporten.Services
 {
@@ -14,12 +16,15 @@ namespace Altinn.ApiClients.Maskinporten.Services
     public class MaskinportenService: IMaskinportenService
     {
         private readonly HttpClient _client;
+        private readonly MaskinportenConfig _maskinPortenConfig;
 
-        public MaskinportenService(HttpClient httpClient)
+        public MaskinportenService(HttpClient httpClient, IOptions<MaskinportenConfig> maskinPortenConfig)
         {
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _client = httpClient;
+            _maskinPortenConfig = maskinPortenConfig.Value;
         }
+
 
         /// <summary>
         /// Creates a Maskinporten token using a base64 encoded JsonWebKey
@@ -30,7 +35,25 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <param name="scope"></param>
         /// <param name="systemUserOrgno"></param>
         /// <returns></returns>
-        public async Task<TokenResponse?> GetToken(string base64EncodedJwk, string environment, string clientId, string scope, string systemUserOrgno)
+        public async Task<TokenResponse?> GetToken(string scope, string? systemUserOrgno)
+        {
+            byte[] base64EncodedBytes = Convert.FromBase64String(_maskinPortenConfig.EncodedJwk);
+            string jwkjson = Encoding.UTF8.GetString(base64EncodedBytes);
+            JsonWebKey jwk = new JsonWebKey(jwkjson);
+            return await GetToken(jwk, _maskinPortenConfig.Environment, _maskinPortenConfig.ClientId, scope, systemUserOrgno);
+        }
+
+
+        /// <summary>
+        /// Creates a Maskinporten token using a base64 encoded JsonWebKey
+        /// </summary>
+        /// <param name="base64EncodedJwk"></param>
+        /// <param name="environment"></param>
+        /// <param name="clientId"></param>
+        /// <param name="scope"></param>
+        /// <param name="systemUserOrgno"></param>
+        /// <returns></returns>
+        public async Task<TokenResponse?> GetToken(string base64EncodedJwk, string environment, string clientId, string scope, string? systemUserOrgno)
         {
             byte[] base64EncodedBytes = Convert.FromBase64String(base64EncodedJwk);
             string jwkjson = Encoding.UTF8.GetString(base64EncodedBytes);
@@ -48,7 +71,7 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <param name="resource"></param>
         /// <param name="systemUserOrgno"></param>
         /// <returns></returns>
-        public async Task<TokenResponse?> GetToken(JsonWebKey jwk, string environment, string clientId, string scope, string systemUserOrgno)
+        public async Task<TokenResponse?> GetToken(JsonWebKey jwk, string environment, string clientId, string scope, string? systemUserOrgno)
         {
             TokenResponse? accesstokenResponse;
             string jwtAssertion = GetJwtAssertion(jwk, environment, clientId, scope, systemUserOrgno);
@@ -67,7 +90,7 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <param name="resource"></param>
         /// <param name="systemUserOrgno"></param>
         /// <returns></returns>
-        private string GetJwtAssertion(JsonWebKey jwk, string environment, string clientId, string scope, string systemUserOrgno)
+        private string GetJwtAssertion(JsonWebKey jwk, string environment, string clientId, string scope, string? systemUserOrgno)
         {
             DateTimeOffset dateTimeOffset = new DateTimeOffset(DateTime.UtcNow);
 

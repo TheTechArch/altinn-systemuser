@@ -2,11 +2,11 @@
 using Altinn.ApiClients.Maskinporten.Models;
 using IO.Swagger.Model;
 using Microsoft.Extensions.Options;
-using SuperSystem.Server.Config;
-using SuperSystem.Server.Services.Interfaces;
+using SmartCloud.Server.Config;
+using SmartCloud.Server.Services.Interfaces;
 using System.Net.Http.Headers;
 
-namespace SuperSystem.Server.Services
+namespace SmartCloud.Server.Services
 {
     /// <summary>
     /// Service responsible for implementing the IKravOgBetalinger interface

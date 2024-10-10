@@ -1,4 +1,4 @@
-﻿namespace SuperSystem.Server.Config
+﻿namespace SmartCloud.Server.Config
 {
     public class KravOgBetalingerConfig
     {

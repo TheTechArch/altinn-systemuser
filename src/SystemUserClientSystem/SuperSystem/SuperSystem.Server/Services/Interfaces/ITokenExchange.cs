@@ -1,4 +1,4 @@
-﻿namespace SuperSystem.Server.Services.Interfaces
+﻿namespace SmartCloud.Server.Services.Interfaces
 {
     public interface ITokenExchange
     {

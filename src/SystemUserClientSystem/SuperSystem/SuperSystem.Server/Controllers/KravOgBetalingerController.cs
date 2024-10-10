@@ -1,13 +1,8 @@
-﻿using Altinn.ApiClients.Maskinporten.Interfaces;
-using Altinn.ApiClients.Maskinporten.Models;
-using IO.Swagger.Model;
-using Microsoft.AspNetCore.Http;
+﻿using IO.Swagger.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using SuperSystem.Server.Config;
-using SuperSystem.Server.Services.Interfaces;
+using SmartCloud.Server.Services.Interfaces;
 
-namespace SuperSystem.Server.Controllers
+namespace SmartCloud.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

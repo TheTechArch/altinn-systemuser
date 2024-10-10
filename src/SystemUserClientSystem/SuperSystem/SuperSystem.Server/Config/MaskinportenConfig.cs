@@ -1,4 +1,4 @@
-﻿namespace SuperSystem.Server.Config
+﻿namespace SmartCloud.Server.Config
 {
     public class MaskinportenConfig
     {
@@ -30,16 +30,26 @@
         /// <summary>
         /// Scope define by Altinn to be alloed to create system user requests
         /// </summary>
-        public string? RequestSystemUserScope { get; set; }
+        public required string RequestSystemUserScope { get; set; }
 
         /// <summary>
         /// Scope for maskinporten client when calling API as system user. This will vary depending on the API the system user need to call
         /// </summary>
-        public string? SystemUserScope { get; set;  }
+        public required string SystemUserScope { get; set;  }
 
         /// <summary>
         /// Base 64 Encoded JWK
         /// </summary>
         public required string EncodedJwk { get; set;  }
+
+        /// <summary>
+        /// The exchange endpoint for Altinn token
+        /// </summary>
+        public required string AltinnExchangeEndpoint { get; set; }
+
+        /// <summary>
+        /// Set Maskinporten environment
+        /// </summary>
+        public required string Environment { get; set; } = "test";
     }
 }
