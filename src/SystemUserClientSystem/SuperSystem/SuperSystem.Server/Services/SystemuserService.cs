@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
+using smartcloud.server.Models;
 using SmartCloud.Server.Config;
 using SmartCloud.Server.Models;
 using SmartCloud.Server.Services.Interfaces;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 
 namespace SmartCloud.Server.Services
 {
@@ -34,11 +34,13 @@ namespace SmartCloud.Server.Services
             return await httpResponse.Content.ReadFromJsonAsync<CreateRequestSystemUserResponse>();
         }
 
-        public async Task<List<CreateRequestSystemUserResponse>> GetRequests(string systemid, string token)
+        public async Task<List<SystemUser>> GetSystemUsersForSystem(string systemid, string token)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            HttpResponseMessage httpResponse = await _client.GetAsync($"https://platform.at22.altinn.cloud/authentication/api/v1/systemuser/request/vendor/{systemid}");
-            return await httpResponse.Content.ReadFromJsonAsync<List<CreateRequestSystemUserResponse>>();
+            HttpResponseMessage httpResponse = await _client.GetAsync($"{_systemRegisterConfig.BaseAdress}{_systemRegisterConfig.SystemUserListForSystemPath}{systemid}");
+            
+            SystemUserWrapper? systemUserWrapper = await httpResponse.Content.ReadFromJsonAsync<SystemUserWrapper>();
+            return systemUserWrapper?.Data;
         }
 
         public async Task<CreateRequestSystemUserResponse> GetRequestStatus(string requestId, string token)

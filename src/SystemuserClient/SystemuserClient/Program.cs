@@ -71,3 +71,4 @@ if (systemUser != null)
     Console.WriteLine($"Org: {systemUser.Systemuser_org.ID}");
 }
 
+Console.WriteLine("systemUserToken: " + systemUserToken.AccessToken);   

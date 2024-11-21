@@ -19,8 +19,8 @@ namespace SmartCloud.Server.Services.Interfaces
         Task<CreateRequestSystemUserResponse> GetRequestStatus(string requestId, string token);    
 
         /// <summary>
-        /// 
+        /// List all systemUsers for a system
         /// </summary>
-        Task<List<CreateRequestSystemUserResponse>> GetRequests(string systemid, string token);
+        Task<List<SystemUser>> GetSystemUsersForSystem(string systemid, string token);
     }
 }

@@ -10,7 +10,7 @@
         /// <summary>
         /// 
         /// </summary>
-        public string? SystemRegisterScope { get; set;  }
+        public required string SystemRegisterScope { get; set;  }
 
         /// <summary>
         /// 
@@ -31,6 +31,8 @@
         /// The path to request a systemUser 
         /// </summary>
         public string RequestSystemUserPath { get; set;  } = "systemuser/request/vendor";
+
+        public string SystemUserListForSystemPath { get; set; } = "systemuser/vendor/bysystem/";
 
         /// <summary>
         /// SystemId 
