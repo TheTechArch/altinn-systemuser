@@ -46,7 +46,7 @@ namespace SmartCloud.Server.Services
         public async Task<CreateRequestSystemUserResponse> GetRequestStatus(string requestId, string token)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            HttpResponseMessage httpResponse = await _client.GetAsync($"https://platform.at22.altinn.cloud/authentication/api/v1/systemuser/request/vendor/{requestId}");
+            HttpResponseMessage httpResponse = await _client.GetAsync($"{_systemRegisterConfig.BaseAdress}{_systemRegisterConfig.RequestSystemUserPath}/{requestId}");
             return await httpResponse.Content.ReadFromJsonAsync<CreateRequestSystemUserResponse>();
         }
     }

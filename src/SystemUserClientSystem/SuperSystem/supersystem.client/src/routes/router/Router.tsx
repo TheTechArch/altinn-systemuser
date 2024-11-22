@@ -6,6 +6,7 @@ import { CompleteSystemUser } from './../../features/completesystemuser/Complete
 import { Receipt } from './../../features/receipt/Receipt';
 import { Dashboard } from './../../features/dashboard/Dashboard';
 import { ClientAdmin } from './../../features/clientadmin/ClientAdmin';
+import { Login } from './../../features/login/Login';
 
 export const Router = createBrowserRouter(
     [
@@ -32,6 +33,10 @@ export const Router = createBrowserRouter(
         {
             path: '/clientadmin',
             element: <ClientAdmin />,
+        },
+        {
+            path: '/login',
+            element: <Login />,
         }
     ],
     { basename: '/' },
