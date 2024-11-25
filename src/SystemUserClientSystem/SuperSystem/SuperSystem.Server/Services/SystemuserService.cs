@@ -49,5 +49,17 @@ namespace SmartCloud.Server.Services
             HttpResponseMessage httpResponse = await _client.GetAsync($"{_systemRegisterConfig.BaseAdress}{_systemRegisterConfig.RequestSystemUserPath}/{requestId}");
             return await httpResponse.Content.ReadFromJsonAsync<CreateRequestSystemUserResponse>();
         }
+
+        public async Task<List<RequestSystemResponse>> GetRequestsForSystem(string systemId, string token)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            HttpResponseMessage httpResponse = await _client.GetAsync($"{_systemRegisterConfig.BaseAdress}{_systemRegisterConfig.RequestSystemPath}{systemId}");
+            if(!httpResponse.IsSuccessStatusCode)
+            {
+                string body = await httpResponse.Content.ReadAsStringAsync();
+            }
+            RequestSystemResponseWrapper? requestSystemResponseWrapper = await httpResponse.Content.ReadFromJsonAsync<RequestSystemResponseWrapper>();
+            return requestSystemResponseWrapper?.Data;
+        }
     }
 }

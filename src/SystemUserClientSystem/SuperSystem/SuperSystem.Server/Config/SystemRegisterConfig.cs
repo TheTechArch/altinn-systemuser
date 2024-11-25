@@ -20,6 +20,11 @@
         /// <summary>
         /// 
         /// </summary>
+        public required string ScopeSystemUserRequestRead { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string? RegisterSystemEndpoint { get; set;  }
 
         /// <summary>
@@ -32,13 +37,20 @@
         /// </summary>
         public string RequestSystemUserPath { get; set;  } = "systemuser/request/vendor";
 
+        /// <summary>
+        /// The path to list systemUsers for a system
+        /// </summary>
         public string SystemUserListForSystemPath { get; set; } = "systemuser/vendor/bysystem/";
+
+        /// <summary>
+        /// The path to list request for a system
+        /// </summary>
+        public string RequestSystemPath { get; set; } = "systemuser/request/vendor/bysystem/";
 
         /// <summary>
         /// SystemId 
         /// </summary>
         public required string SystemId { get; set; }
-
 
         /// <summary>
         /// Comma seperated string identifying all Altinn resources that the system should have access to

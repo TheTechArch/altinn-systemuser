@@ -3,6 +3,7 @@ using Altinn.ApiClients.Maskinporten.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using smartcloud.server.Models;
 using SmartCloud.Server.Config;
 using SmartCloud.Server.Models;
 using SmartCloud.Server.Services.Interfaces;
@@ -37,6 +38,16 @@ namespace smartcloud.server.Controllers
             TokenResponse? systemUserToken = await _maskinportenService.GetToken(scope, null);
 
             return await _systemUser.GetSystemUsersForSystem(_systemRegisterConfig.SystemId, systemUserToken.AccessToken);
+        }
+
+        [HttpGet("requests")]
+        public async Task<List<RequestSystemResponse>> Requests()
+        {
+            string scope = _systemRegisterConfig.ScopeSystemUserRequestRead;
+
+            TokenResponse? systemUserToken = await _maskinportenService.GetToken(scope, null);
+
+            return await _systemUser.GetRequestsForSystem(_systemRegisterConfig.SystemId, systemUserToken.AccessToken);
         }
         
 

@@ -1,4 +1,5 @@
-﻿using SmartCloud.Server.Models;
+﻿using smartcloud.server.Models;
+using SmartCloud.Server.Models;
 
 namespace SmartCloud.Server.Services.Interfaces
 {
@@ -22,5 +23,10 @@ namespace SmartCloud.Server.Services.Interfaces
         /// List all systemUsers for a system
         /// </summary>
         Task<List<SystemUser>> GetSystemUsersForSystem(string systemid, string token);
+
+        /// <summary>
+        /// List all request for a system
+        /// </summary>
+        Task<List<RequestSystemResponse>> GetRequestsForSystem(string systemId, string token);
     }
 }
