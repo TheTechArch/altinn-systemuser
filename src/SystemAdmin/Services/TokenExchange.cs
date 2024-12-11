@@ -14,7 +14,7 @@ namespace SuperSystem.Server.Services
         public async Task<string> ExhangeMaskinporten(string token)
         {
            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            HttpResponseMessage httpResponse = await _client.GetAsync("https://platform.at22.altinn.cloud/authentication/api/v1/exchange/maskinporten");
+            HttpResponseMessage httpResponse = await _client.GetAsync("https://platform.tt02.altinn.no/authentication/api/v1/exchange/maskinporten");
             return await httpResponse.Content.ReadAsStringAsync();
         }
     }

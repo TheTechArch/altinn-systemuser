@@ -43,6 +43,8 @@ namespace SystemAdmin.Services
             HttpResponseMessage response = await _httpClient.PutAsJsonAsync("systemregister/vendor/991825827_smartcloud", request);
           
             string responseText = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine(response.StatusCode);
         }
 
     }

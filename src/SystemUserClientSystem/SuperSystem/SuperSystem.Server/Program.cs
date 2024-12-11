@@ -3,6 +3,9 @@ using Altinn.ApiClients.Maskinporten.Interfaces;
 using Altinn.ApiClients.Maskinporten.Services;
 using SmartCloud.Server.Services;
 using SmartCloud.Server.Services.Interfaces;
+using smartcloud.server.Clients.Interfaces;
+using smartcloud.server.Clients;
+using smartcloud.server.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,8 +42,10 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.Configure<MaskinportenConfig>(config.GetSection("Maskinporten"));
     services.Configure<KravOgBetalingerConfig>(config.GetSection("KravOgBetalinger"));
     services.Configure<SystemRegisterConfig>(config.GetSection("SystemRegister"));
+    services.Configure<SmartcloudConfig>(config.GetSection("Smartcloud"));  
     services.AddHttpClient<IMaskinportenService, MaskinportenService>();
     services.AddHttpClient<ITokenExchange, TokenExchange>();
     services.AddHttpClient<ISystemUser, SystemuserService>();
     services.AddHttpClient<IKravOgBetalinger, KravOgBetalingerService>();
+    services.AddHttpClient<ILogistics, LogisticsClient>();
 }

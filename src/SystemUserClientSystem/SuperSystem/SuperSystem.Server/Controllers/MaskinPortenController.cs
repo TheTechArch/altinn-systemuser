@@ -76,6 +76,11 @@ namespace SmartCloud.Server.Controllers
             }
 
             TokenResponse? systemUserToken = await _maskinportenService.GetToken(scope, systemUserOrg);
+            if(systemUserOrg != null)
+            {
+                return Ok(systemUserToken.AccessToken);
+            }
+
             string altinntoken = await _tokenExchange.ExhangeMaskinporten(systemUserToken.AccessToken);
             // var jwtHandler = new JwtSecurityTokenHandler();
             // var decodedToken = jwtHandler.ReadJwtToken(systemUserToken.AccessToken);
