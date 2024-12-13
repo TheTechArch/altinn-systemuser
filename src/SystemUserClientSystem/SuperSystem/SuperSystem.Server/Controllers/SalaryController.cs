@@ -5,7 +5,7 @@ namespace smartcloud.server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountingController : ControllerBase
+    public class SalaryController : ControllerBase
     {
     }
 }

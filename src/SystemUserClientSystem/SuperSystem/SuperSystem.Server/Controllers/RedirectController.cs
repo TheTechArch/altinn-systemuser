@@ -32,7 +32,7 @@ namespace SmartCloud.Server.Controllers
         }
 
 
-        public async Task<IActionResult> Index([FromQuery] string systemUserOrg)
+        public async Task<IActionResult> Index([FromQuery] string systemUserOrg, [FromQuery] string product)
         {
             string scope = _systemRegisterConfig.RequestSystemUserScope;
 
@@ -50,15 +50,22 @@ namespace SmartCloud.Server.Controllers
 
             string[] resources = _systemRegisterConfig.RightResources.Split(",");
 
+            if (!string.IsNullOrEmpty(product) && product.Equals("basic", StringComparison.OrdinalIgnoreCase))
+            {
+                resources = _systemRegisterConfig.RightResourcesBasic.Split(",");
+            }
+            else if (!string.IsNullOrEmpty(product) && product.Equals("standard", StringComparison.OrdinalIgnoreCase))
+            {
+                resources = _systemRegisterConfig.RightResourcesStandard.Split(",");
+            }
+           
             foreach(string resource in resources){
                 
                 createSystemUserRequest.Rights.Add(new Right()
                 {
                     Resource = [new AttributePair() { Id = "urn:altinn:resource", Value = resource }]
                 });
-            
             }
-
 
             CreateRequestSystemUserResponse createRequestSystemUserResponse = await _systemUser.CreateSystemUserRequest(createSystemUserRequest, altinntoken);
 

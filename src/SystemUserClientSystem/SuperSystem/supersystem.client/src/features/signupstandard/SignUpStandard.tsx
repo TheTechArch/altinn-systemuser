@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import './SignUpBasic.css';
+import './SignUpStandard.css';
 import './../../tailwind.css';
 import smartlogo from './../../assets/SmartCloudLogo.svg';
 import { Textfield, Checkbox } from '@digdir/designsystemet-react';
@@ -9,7 +9,7 @@ import '@digdir/designsystemet-theme';
 import '@digdir/designsystemet-css';
 import { CheckmarkIcon } from '@navikt/aksel-icons';
 
-export const SignUpBasic = () => {
+export const SignUpStandard = () => {
     const [firmaNavn, setFirmaNavn] = useState<string | undefined>(undefined);
     const [organisasjonsNr, setOrganisasjonsNr] = useState<string | undefined>(undefined);
 
@@ -77,11 +77,11 @@ export const SignUpBasic = () => {
                                     </Checkbox>
                                     <br />
 
-                                    <Link to={`/complete?organisajonsnr=${organisasjonsNr}&product=basic`} className="bg-smartcloudbluelight px-4 py-2 rounded-3xl text-white shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
+                                    <Link to={`/complete?organisajonsnr=${organisasjonsNr}&product=standard`} className="bg-smartcloudbluelight px-4 py-2 rounded-3xl text-white shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
                                     <br /><br />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-semibold mb-4">SmartBasic</h3>
+                                    <h3 className="text-xl font-semibold mb-4">SmartStandard</h3>
                                     <CheckmarkIcon title="a11y-title" className="inline w-6 h-6 font-color-cloudbluelight" fontSize="1.5rem" /> SmartRegnskap<br />
                                     <CheckmarkIcon title="a11y-title" className="inline w-6 h-6 font-color-cloudbluelight" fontSize="1.5rem" /> Systemtilgang i Altinn<br />
                                     <br />

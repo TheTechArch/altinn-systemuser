@@ -9,7 +9,8 @@ import '@digdir/designsystemet-css';
 export const CompleteSystemUser = () => {
     const [urlParams] = useSearchParams();
     const orgnr = urlParams.get('organisajonsnr');
-    
+    const product = urlParams.get('product');
+
     return (
         <div>
             <div className="min-h-screen bg-gray-100">
@@ -37,7 +38,7 @@ export const CompleteSystemUser = () => {
                                 <p className="text-xl font-color-cloudblue">For å kunne godkjenne systemtilgang trenger du rollen<br /> Hovedadministrator, Tilgangstyrer eller Daglig leder.</p>
                                 <br /><br />
 
-                                <a href={`/Redirect?systemuserorg=${orgnr}`} className="bg-smartcloudbluelight px-4 py-2 text-white rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Kom i gang</a>
+                                <a href={`/Redirect?systemuserorg=${orgnr}&product=${product}`} className="bg-smartcloudbluelight px-4 py-2 text-white rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Kom i gang</a>
 
                                 <br />
                             </div>

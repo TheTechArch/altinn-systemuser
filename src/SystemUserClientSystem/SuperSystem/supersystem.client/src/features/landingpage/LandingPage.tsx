@@ -102,7 +102,7 @@ export const LandingPage = () => {
                                 <br />
                                 <br />
                                 <b>kr 609 pr. mnd</b><br /><br />
-                                <Link to="/signupbasic" className="bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
+                                <Link to="/signupstandard" className="bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Registrer deg</Link>
                             </div>
                             <div className="p-2">
                                 <h3 className="text-xl font-semibold mb-4">SmartPluss</h3>

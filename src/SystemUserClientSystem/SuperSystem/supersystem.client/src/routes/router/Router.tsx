@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import { LandingPage } from './../../features/landingpage/LandingPage';
 import { SignUpBasic } from './../../features/signupbasic/SignUpBasic'; 
+import { SignUpStandard } from './../../features/signupstandard/SignUpStandard';
 import { CompleteSystemUser } from './../../features/completesystemuser/CompleteSystemUser';
 import { Receipt } from './../../features/receipt/Receipt';
 import { Dashboard } from './../../features/dashboard/Dashboard';
@@ -17,6 +18,10 @@ export const Router = createBrowserRouter(
         {
             path: '/signupbasic',
             element: <SignUpBasic />,
+        },
+        {
+            path: '/signupstandard',
+            element: <SignUpStandard />,
         },
         {
             path: '/complete',

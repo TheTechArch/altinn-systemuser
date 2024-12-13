@@ -56,5 +56,15 @@
         /// Comma seperated string identifying all Altinn resources that the system should have access to
         /// </summary>
         public required string RightResources { get; set; }
+
+        /// <summary>
+        /// Comma seperated string identifying all Altinn resources that the system should have access to
+        /// </summary>
+        public required string RightResourcesBasic { get; set; }
+
+        /// <summary>
+        /// Comma seperated string identifying all Altinn resources that the system should have access to
+        /// </summary>
+        public required string RightResourcesStandard { get; set; }
     }
 }
