@@ -8,6 +8,14 @@ using SystemUserApi.Models.Salary;
 namespace smartcloud.server.Controllers
 {
 
+    /// <summary>
+    /// This controller demonstrate how the end user system sofware creates a request to the a API endpoint. 
+    /// 
+    /// Depending on the rights of the system user, the API will return the salary information of the requested organization.
+    /// 
+    /// If the logged in organization does not have a system USer with the needed rights, the API will return a 403 Forbidden status code.
+    /// </summary>
+
     [Route("api/[controller]")]
     [ApiController]
     public class SalaryController : ControllerBase
