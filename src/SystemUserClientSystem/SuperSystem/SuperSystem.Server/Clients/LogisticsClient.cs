@@ -2,13 +2,17 @@
 using Altinn.ApiClients.Maskinporten.Models;
 using Altinn.ApiClients.Maskinporten.Services;
 using IO.Swagger.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using smartcloud.server.Clients.Interfaces;
 using smartcloud.server.Config;
 using SmartCloud.Server.Config;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Net.NetworkInformation;
 using SystemUserApi.Models.Logistics;
+using SystemUserApi.Models.Salary;
 
 namespace smartcloud.server.Clients
 {
@@ -36,7 +40,24 @@ namespace smartcloud.server.Clients
             }
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
-            LogisticStatus? logisticStatus = await _client.GetFromJsonAsync<LogisticStatus>(_smartCloudConfig.LogisticApi + dataOrganization);
+
+            HttpResponseMessage httpResponse = await _client.GetAsync(_smartCloudConfig.LogisticApi + dataOrganization);
+
+            if (httpResponse.StatusCode.Equals(HttpStatusCode.Forbidden))
+            {
+                return null;
+            }
+
+            if(!httpResponse.IsSuccessStatusCode)
+            {
+                return new LogisticStatus
+                {
+                    Status = "Error",
+                    ExportStatus = httpResponse.StatusCode.ToString(), 
+                };
+            }
+
+            LogisticStatus? logisticStatus = await httpResponse.Content.ReadFromJsonAsync<LogisticStatus>();
 
             return logisticStatus;
         }

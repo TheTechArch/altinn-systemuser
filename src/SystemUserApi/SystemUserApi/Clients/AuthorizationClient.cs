@@ -32,7 +32,9 @@ namespace SystemUserApi.Clients
 
         public async Task<XacmlJsonResponse> AuthorizeReqeust(XacmlJsonRequestRoot xacmlJsonRequestRoot)
         {
-            TokenResponse? tokenResponse = await _maskinportenService.GetToken(_maskinportenConfig.EncodedJwk, "test", _maskinportenConfig.ClientId, _authorizationConfig.PDPScope, null);
+            // Generates a Maskinporten token using a base64 encoded JsonWebKey. This is stored in Azure as environment variable
+            // Ask for the scope needed for the PDP altinn:authorization/authorize
+            TokenResponse? tokenResponse = await _maskinportenService.GetToken(_maskinportenConfig.EncodedJwk, "test", _maskinportenConfig.ClientId, _authorizationConfig.PDPScope);
 
             if(tokenResponse == null)
             {

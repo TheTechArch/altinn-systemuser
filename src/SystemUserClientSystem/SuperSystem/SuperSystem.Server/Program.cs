@@ -48,4 +48,5 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddHttpClient<ISystemUser, SystemuserService>();
     services.AddHttpClient<IKravOgBetalinger, KravOgBetalingerService>();
     services.AddHttpClient<ILogistics, LogisticsClient>();
+    services.AddHttpClient<ISalary, SalaryClient>();
 }

@@ -18,6 +18,8 @@ ConfigureServices(builder.Services, builder.Configuration);
 
 builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+// Add authentication and uses Maskinporten as the authentication provider
+// SystemUser tokens is maskinporten token with some extra claims
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

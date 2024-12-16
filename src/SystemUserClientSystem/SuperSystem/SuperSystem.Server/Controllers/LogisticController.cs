@@ -44,6 +44,8 @@ namespace smartcloud.server.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden, "Forbidden. System user does not have the needed rights delegated to it.");
             }
 
+
+
             return Ok(status);
         }
     }

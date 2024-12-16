@@ -11,7 +11,7 @@ using Altinn.ApiClients.Maskinporten.Models;
 namespace Altinn.ApiClients.Maskinporten.Services
 {
     /// <summary>
-    /// This service is responsible for creatingen a SystemUser Maskinporten token using a JsonWebKey
+    /// This service is responsible for creating Maskinporten tokens to be used for authetication of this application when calling Altinn API
     /// </summary>
     public class MaskinportenService: IMaskinportenService
     {
@@ -35,12 +35,12 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <param name="scope"></param>
         /// <param name="systemUserOrgno"></param>
         /// <returns></returns>
-        public async Task<TokenResponse?> GetToken(string scope, string? systemUserOrgno)
+        public async Task<TokenResponse?> GetToken(string scope)
         {
             byte[] base64EncodedBytes = Convert.FromBase64String(_maskinPortenConfig.EncodedJwk);
             string jwkjson = Encoding.UTF8.GetString(base64EncodedBytes);
             JsonWebKey jwk = new JsonWebKey(jwkjson);
-            return await GetToken(jwk, _maskinPortenConfig.Environment, _maskinPortenConfig.ClientId, scope, systemUserOrgno);
+            return await GetToken(jwk, _maskinPortenConfig.Environment, _maskinPortenConfig.ClientId, scope);
         }
 
 
@@ -53,12 +53,12 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <param name="scope"></param>
         /// <param name="systemUserOrgno"></param>
         /// <returns></returns>
-        public async Task<TokenResponse?> GetToken(string base64EncodedJwk, string environment, string clientId, string scope, string? systemUserOrgno)
+        public async Task<TokenResponse?> GetToken(string base64EncodedJwk, string environment, string clientId, string scope)
         {
             byte[] base64EncodedBytes = Convert.FromBase64String(base64EncodedJwk);
             string jwkjson = Encoding.UTF8.GetString(base64EncodedBytes);
             JsonWebKey jwk = new JsonWebKey(jwkjson);
-            return await GetToken(jwk, environment, clientId, scope, systemUserOrgno);
+            return await GetToken(jwk, environment, clientId, scope);
         }
 
         /// <summary>
@@ -71,10 +71,10 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <param name="resource"></param>
         /// <param name="systemUserOrgno"></param>
         /// <returns></returns>
-        public async Task<TokenResponse?> GetToken(JsonWebKey jwk, string environment, string clientId, string scope, string? systemUserOrgno)
+        public async Task<TokenResponse?> GetToken(JsonWebKey jwk, string environment, string clientId, string scope)
         {
             TokenResponse? accesstokenResponse;
-            string jwtAssertion = GetJwtAssertion(jwk, environment, clientId, scope, systemUserOrgno);
+            string jwtAssertion = GetJwtAssertion(jwk, environment, clientId, scope);
             FormUrlEncodedContent content = GetUrlEncodedContent(jwtAssertion);
             accesstokenResponse = await PostToken(environment, content);
             return accesstokenResponse;
@@ -90,7 +90,7 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <param name="resource"></param>
         /// <param name="systemUserOrgno"></param>
         /// <returns></returns>
-        private string GetJwtAssertion(JsonWebKey jwk, string environment, string clientId, string scope, string? systemUserOrgno)
+        private string GetJwtAssertion(JsonWebKey jwk, string environment, string clientId, string scope)
         {
             DateTimeOffset dateTimeOffset = new DateTimeOffset(DateTime.UtcNow);
 
@@ -108,31 +108,6 @@ namespace Altinn.ApiClients.Maskinporten.Services
                 { "jti", Guid.NewGuid().ToString() },
             };
            
-            /// Add the authorization_details in JWT Grant to support systemuser if systemUserOrgno is provided
-            if(systemUserOrgno != null)
-            {
-                /// Add the systemuser_org in the authorization_details. This is the organization that has created a connection between their system user and the system in Altinn System Register
-                JwtPayload systemUserOrg = new JwtPayload
-                {
-                    { "authority", "iso6523-actorid-upis" },
-                    { "ID", $"0192:{systemUserOrgno}" },
-                };
-
-                /// Add the authorization_details in JWT Grant to support systemuser
-                JwtPayload authorizationDetail = new JwtPayload()
-                {
-                    { "systemuser_org", systemUserOrg },
-                    { "type" , "urn:altinn:systemuser"}
-                };
-
-                List<JwtPayload> authorizationDetails = new List<JwtPayload>
-                {
-                    authorizationDetail
-                };
-
-                payload.Add("authorization_details", authorizationDetails);
-            }
-
             JwtSecurityToken securityToken = new JwtSecurityToken(header, payload);
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
 

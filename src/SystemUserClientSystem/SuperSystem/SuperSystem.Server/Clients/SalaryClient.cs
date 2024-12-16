@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using smartcloud.server.Clients.Interfaces;
 using smartcloud.server.Config;
 using SmartCloud.Server.Config;
+using System.Net;
 using System.Net.Http.Headers;
 using SystemUserApi.Models.Logistics;
 using SystemUserApi.Models.Salary;
@@ -34,8 +35,24 @@ namespace smartcloud.server.Clients
             }
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
-            SalaryInfo? salaryInfo = await _client.GetFromJsonAsync<SalaryInfo>(_smartCloudConfig.SalariApi + dataOrganization);
+            HttpResponseMessage httpResponse = await _client.GetAsync(_smartCloudConfig.SalariApi + dataOrganization);
 
+            if(httpResponse.StatusCode.Equals(HttpStatusCode.Forbidden))
+            {
+                return null;
+            }
+
+            if(!httpResponse.IsSuccessStatusCode)
+            {
+                return new SalaryInfo
+                {
+                     SalaryAmount = (int) httpResponse.StatusCode
+         
+                };
+            }
+
+            SalaryInfo? salaryInfo = await httpResponse.Content.ReadFromJsonAsync<SalaryInfo>();
+                
             return salaryInfo;
         }
     }
