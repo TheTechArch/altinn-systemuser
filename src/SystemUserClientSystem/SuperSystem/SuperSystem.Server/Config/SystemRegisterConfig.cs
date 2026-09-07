@@ -1,4 +1,4 @@
-﻿namespace SmartCloud.Server.Config
+namespace SmartCloud.Server.Config
 {
     public class SystemRegisterConfig
     {
@@ -6,6 +6,7 @@
         /// 
         /// </summary>
         public string? BaseAdress { get; set; }
+        public string? DefaultRedirectUrl { get; set; }
 
         /// <summary>
         /// 

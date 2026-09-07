@@ -1,4 +1,4 @@
-﻿using Altinn.ApiClients.Maskinporten.Models;
+using Altinn.ApiClients.Maskinporten.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -37,9 +37,22 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <returns></returns>
         public async Task<TokenResponse?> GetToken(string scope, string? systemUserOrgno)
         {
-            byte[] base64EncodedBytes = Convert.FromBase64String(_maskinPortenConfig.EncodedJwk);
-            string jwkjson = Encoding.UTF8.GetString(base64EncodedBytes);
-            JsonWebKey jwk = new JsonWebKey(jwkjson);
+            if (string.IsNullOrWhiteSpace(_maskinPortenConfig.EncodedJwk) ||
+                string.IsNullOrWhiteSpace(_maskinPortenConfig.ClientId) ||
+                _maskinPortenConfig.Environment is not ("test" or "prod"))
+                throw new SmartCloud.Server.Models.MaskinportenConfigurationException();
+
+            JsonWebKey jwk;
+            try
+            {
+                byte[] base64EncodedBytes = Convert.FromBase64String(_maskinPortenConfig.EncodedJwk);
+                string jwkjson = Encoding.UTF8.GetString(base64EncodedBytes);
+                jwk = new JsonWebKey(jwkjson);
+            }
+            catch (Exception exception) when (exception is FormatException or ArgumentException)
+            {
+                throw new SmartCloud.Server.Models.MaskinportenConfigurationException();
+            }
             return await GetToken(jwk, _maskinPortenConfig.Environment, _maskinPortenConfig.ClientId, scope, systemUserOrgno);
         }
 

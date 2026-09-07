@@ -35,7 +35,10 @@ app.Run();
 
 void ConfigureServices(IServiceCollection services, IConfiguration config)
 {
-    services.AddControllers();
+    services.AddControllers(options => options.Filters.Add<SmartCloud.Server.Filters.AltinnExceptionFilter>());
+    services.AddMemoryCache();
+    services.AddHttpClient<AltinnVendorClient>().ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
+    services.AddHttpClient("metadata");
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen();
@@ -45,7 +48,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.Configure<SmartcloudConfig>(config.GetSection("Smartcloud"));  
     services.AddHttpClient<IMaskinportenService, MaskinportenService>();
     services.AddHttpClient<ITokenExchange, TokenExchange>();
-    services.AddHttpClient<ISystemUser, SystemuserService>();
+    services.AddScoped<ISystemUser, SystemuserService>();
     services.AddHttpClient<IKravOgBetalinger, KravOgBetalingerService>();
     services.AddHttpClient<ILogistics, LogisticsClient>();
     services.AddHttpClient<ISalary, SalaryClient>();

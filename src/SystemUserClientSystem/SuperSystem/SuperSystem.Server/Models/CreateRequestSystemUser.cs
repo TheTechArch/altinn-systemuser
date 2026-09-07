@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace SmartCloud.Server.Models
@@ -13,6 +13,8 @@ namespace SmartCloud.Server.Models
         /// </summary>
         [JsonPropertyName("externalRef")]
         public string? ExternalRef { get; set; }
+        public string? IntegrationTitle { get; set; }
+        public List<AccessPackage> AccessPackages { get; set; } = [];
 
         /// <summary>
         /// The Id for the Registered System that this Request will be based on. 
