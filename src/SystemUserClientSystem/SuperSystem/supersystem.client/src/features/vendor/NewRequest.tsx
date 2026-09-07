@@ -6,6 +6,7 @@ import { JsonDetails, Notice } from './VendorLayout';
 import { AccessCatalogue, SelectedAccess } from './AccessCatalogue';
 import { PackageRow } from './SystemOverview';
 import { RequestResult } from './Requests';
+import { TenorPicker, TestOrganisationDetails, TestPersonCard } from './TenorPicker';
 
 export function RegisteredAccessPicker({ rights, packages, onRights, onPackages, agent = false }: {
   rights: Right[]; packages: AccessPackage[]; onRights: (value: Right[]) => void; onPackages: (value: AccessPackage[]) => void; agent?: boolean;
@@ -28,6 +29,7 @@ export function NewRequest() {
   const preset = configuration.presets.find(p => p.id === params.get('product'));
   const [kind, setKind] = useState<'standard' | 'agent'>('standard');
   const [org, setOrg] = useState(params.get('org') || params.get('organisajonsnr') || '');
+  const [testOrganisation, setTestOrganisation] = useState<TestOrganisationDetails | null>(null);
   const [title, setTitle] = useState('');
   const [externalRef, setExternalRef] = useState('');
   const [redirect, setRedirect] = useState(configuration.defaultRedirectUrl || '');
@@ -51,17 +53,19 @@ export function NewRequest() {
   return <><div className="vendor-title"><div><p className="vendor-eyebrow">Opprett systembruker</p><h1>Ny forespørsel</h1><p>Velg hvem systemet skal representere, og hvilke tilganger kunden skal godkjenne.</p></div>
     <Link to={`/vendor/settings${query(systemId)}`}>Rediger systemets tilganger</Link></div>
     {result ? <><p role="status" className="vendor-notice">Altinn har returnert forespørselen. Ved gjenbruk av system, organisasjon og ekstern referanse kan dette være en eksisterende forespørsel.</p>
-      <RequestResult request={result} kind={kind} /><JsonDetails value={result} label="Vis svaret fra Altinn" />
+      <RequestResult request={result} kind={kind} />{testOrganisation && testOrganisation.organisationNumber === result.partyOrgNo && <TestPersonCard organisation={testOrganisation} />}<JsonDetails value={result} label="Vis svaret fra Altinn" />
       <button onClick={() => { setResult(null); setExternalRef(''); }}>Tilbake til konfigurasjon</button></> :
     <form onSubmit={submit}><fieldset disabled={busy}><section className="vendor-card"><h2>1. Type og organisasjon</h2>
       <label>Systembrukertype<select value={kind} onChange={e => { const value = e.target.value as 'standard' | 'agent'; setKind(value); if (value === 'agent') setRights([]); }}>
         <option value="standard">Vanlig systembruker – eget system</option><option value="agent">Agentsystembruker – klientsystem</option></select></label>
       <p>{kind === 'agent' ? 'Representerer kundens klienter. Bare tilgangspakker kan velges. Kunden må knytte klienter til systembrukeren etter godkjenning.' : 'Representerer organisasjonen som godkjenner forespørselen. Velg tilgangspakker og/eller enkeltrettigheter.'}</p>
-      <div className="vendor-form-grid"><label>Organisasjonsnummer<input required inputMode="numeric" pattern="[0-9]{9}" maxLength={9} value={org} onChange={e => setOrg(e.target.value)} placeholder="9 siffer" /></label>
+      <div className="vendor-form-grid"><label>Organisasjonsnummer<input required inputMode="numeric" pattern="[0-9]{9}" maxLength={9} value={org} onChange={e => { setOrg(e.target.value); setTestOrganisation(null); }} placeholder="9 siffer" /></label>
         <label>Navn på systembrukeren (valgfritt)<input value={title} onChange={e => setTitle(e.target.value)} placeholder="Bruker systemnavnet hvis tomt" /></label>
         <label>Ekstern referanse (valgfritt)<input value={externalRef} onChange={e => setExternalRef(e.target.value)} /><small>Tom verdi bruker organisasjonsnummeret. Bruk samme referanse ved gjentatte forsøk for samme integrasjon.</small></label>
         <label>Returadresse (valgfritt)<input type="url" list="request-redirects" value={redirect} onChange={e => setRedirect(e.target.value)} placeholder="https://…/receipt" />
-          <datalist id="request-redirects">{system.allowedRedirectUrls?.map(url => <option key={url} value={url} />)}</datalist><small>Må samsvare med en tillatt returadresse i systemregisteret. Kan utelates.</small></label></div></section>
+          <datalist id="request-redirects">{system.allowedRedirectUrls?.map(url => <option key={url} value={url} />)}</datalist><small>Må samsvare med en tillatt returadresse i systemregisteret. Kan utelates.</small></label></div>
+      {configuration.environment === 'platform.tt02.altinn.no' && <TenorPicker onSelect={value => { setOrg(value.organisationNumber); setTestOrganisation(value); }} />}
+      {testOrganisation && <TestPersonCard organisation={testOrganisation} />}</section>
       <section className="vendor-card"><h2>2. Tilganger</h2>{kind === 'standard' && <div className="vendor-actions">{configuration.presets.map(p => <button type="button" key={p.id}
         onClick={() => setRights((system.rights || []).filter(r => p.resources.includes(rightLabel(r))))}>Bruk {p.name}</button>)}</div>}
         <RegisteredAccessPicker rights={rights} packages={packages} onRights={setRights} onPackages={setPackages} agent={kind === 'agent'} /></section>

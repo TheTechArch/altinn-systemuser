@@ -12,16 +12,25 @@ public class AltinnExceptionFilter(ILogger<AltinnExceptionFilter> logger) : IExc
     public void OnException(ExceptionContext context)
     {
         var exception = context.Exception;
-        if (exception is not (AltinnApiException or HttpRequestException or TokenRequestException or TaskCanceledException or MaskinportenConfigurationException))
+        if (exception is not (TenorException or AltinnApiException or HttpRequestException or TokenRequestException or TaskCanceledException or MaskinportenConfigurationException))
             return;
         if (context.HttpContext.RequestAborted.IsCancellationRequested) return;
-        var status = exception is MaskinportenConfigurationException ? 503 : exception is AltinnApiException apiError ? apiError.StatusCode : 502;
+        var status = exception is TenorException tenorError ? tenorError.Status : exception is MaskinportenConfigurationException ? 503 : exception is AltinnApiException apiError ? apiError.StatusCode : 502;
         var problem = new ProblemDetails
         {
             Status = status,
             Title = "Kallet til Altinn eller Maskinporten feilet",
             Detail = "Kontroller konfigurasjon, tilganger og forespørselen, og prøv igjen.",
         };
+        if (exception is TenorException tenor)
+        {
+            problem.Title = "Kunne ikke hente testdata fra Tenor";
+            problem.Detail = tenor.Message;
+            problem.Extensions["service"] = "Tenor";
+            problem.Extensions["scope"] = TenorClient.Scope;
+            problem.Extensions["environment"] = "test";
+            problem.Extensions["upstreamStatus"] = tenor.UpstreamStatus;
+        }
         if (exception is MaskinportenConfigurationException)
         {
             problem.Title = "Maskinporten er ikke konfigurert";

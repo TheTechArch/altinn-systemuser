@@ -90,6 +90,25 @@ Metadata bruker `/accessmanagement/api/v1/meta/info/accesspackages/search`, `urn
 - Tom ekstern referanse bruker organisasjonsnummeret. De eldre fagmodulene og demo-innloggingen er fortsatt organisasjonsnummerbaserte og velger ikke vilkårlig system/ekstern referanse ved tokenutstedelse.
 - Ingen ekte opprettelser, oppdateringer eller slettinger i TT02 inngår i testene.
 
+## Testvirksomhet og daglig leder fra Tenor
+
+I «Ny forespørsel» kan du åpne «Finn testvirksomhet i Tenor», søke på navn eller organisasjonsnummer, vise testpersonen og velge virksomheten. Organisasjonsnummeret fylles i skjemaet. Daglig leder (`DAGL`) prioriteres; innehaver (`INNH`) vises med egen rollebetegnelse dersom daglig leder mangler. Navn hentes fra gjeldende navneoppføring i Folkeregister-kilden. Manglende navn eller roller vises eksplisitt.
+
+Legg scopet `skatteetaten:testnorge/testdata.read` til på den eksisterende Maskinporten-klienten. Virksomheten må også ha fått tilgang til Tenors søke-API. Backend bruker samme `Maskinporten:ClientId` og `Maskinporten:EncodedJwk` som ellers, men ber om et eget token med bare Tenor-scopet og uten systembrukerens `authorization_details`. Tokenet sendes direkte til Tenor og veksles ikke hos Altinn. Altinn-scopene endres ikke.
+
+Funksjonen er tilgjengelig når `Maskinporten:Environment` er `test` og `SystemRegister:BaseAdress` peker på `platform.tt02.altinn.no`. Ingen nye innstillinger eller hemmeligheter kreves. Andre miljøer avvises på serveren før tokenhenting.
+
+| SmartCloud API | Tenor-kall |
+| --- | --- |
+| `GET /api/testdata/configuration` | Lokal kontroll av testmiljø, ingen tokenhenting |
+| `GET /api/testdata/organisations?term=...` | `/api/testnorge/v2/soek/brreg-er-fr`, KQL på navn eller organisasjonsnummer |
+| `GET /api/testdata/organisations/{orgnr}` | Virksomhetens kildedata og rolleopplysninger; `/soek/freg` for testpersonens navn |
+
+Tenor-basen er `https://testdata.api.skatteetaten.no`. Søk viser maksimalt ti virksomheter; avgrens søket ved flere treff. Input behandles som en søkeverdi, ikke som fri KQL. Personer hentes først når en virksomhet åpnes. Kildedata og tokens sendes ikke til nettleseren; bare virksomhetsnavn, organisasjonsnummer og relevante testpersoner returneres.
+
+Testpersonens syntetiske fødselsnummer kan kopieres for TestID-innlogging i TT02. Personen vises også ved godkjenningslenken etter opprettelse. Valget beholdes i den åpne siden, og fjernes ved manuell endring av organisasjonsnummeret; det lagres ikke mellom sideoppdateringer. Fødselsnummeret inngår ikke i systembrukerforespørselen. Tenor-feil blokkerer ikke manuell utfylling.
+
+Kontrakten er kontrollert mot [Tenors gjeldende OpenAPI-spesifikasjon](https://gist.githubusercontent.com/skatteetaten-tenor-bot/59ea64aad03d5adf953729793fcbde19/raw), lenket fra [Tenor-dokumentasjonens konfigurasjon](https://github.com/Skatteetaten/testnorge-tenor-dokumentasjon/blob/main/docusaurus.config.ts). Tester bruker syntetiske fixtures og avskjærer alle eksterne kall.
 ## Feilsøking av API-kall
 
 Feilpanelet skiller mellom feil ved tokenhenting i Maskinporten og avviste kall til Altinn. For Maskinporten vises OAuth-feilkode, eventuell MP-kode, miljø, forespurt scope og tjenestens HTTP-status. HTTP 502 fra SmartCloud kan for eksempel skyldes HTTP 400 fra Maskinporten; begge vises for å gjøre dette tydelig.
