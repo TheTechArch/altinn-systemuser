@@ -17,7 +17,7 @@ Start på **/vendor/systems**. Leverandøren identifiseres med virksomhetens Mas
 
 ## Lokal oppstart
 
-Krever .NET 8 SDK/runtime (eller nyere SDK med .NET 8 runtime), Node og npm.
+Krever .NET 10 SDK/runtime, Node og npm.
 
 ```powershell
 # Fra src/SystemUserClientSystem/SuperSystem
@@ -36,8 +36,6 @@ npm run dev
 ```
 
 Åpne `http://localhost:5173/vendor/systems`. Uten `SMARTCLOUD_HTTP=1` bruker Vite HTTPS-oppsettet. Vite proxyer `/api`, `/Redirect` og `/Authenticate` til backend. Produksjonsbygg trenger ikke utviklingssertifikat.
-
-På en utviklingsmaskin med kun .NET 10 runtime kan `DOTNET_ROLL_FORWARD=Major` brukes for lokal verifisering av net8-prosjektet. Målrammeverket endres ikke.
 
 ## Konfigurasjon
 
