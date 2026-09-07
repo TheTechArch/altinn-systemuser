@@ -98,3 +98,10 @@
 }
 
 .vendor-error p { white-space: pre-line; overflow-wrap: anywhere; }
+
+.tenor-picker { margin: 1.5rem 0; padding: 1rem; border: 1px solid #97b9c5; border-radius: .4rem; }
+.tenor-picker summary { cursor: pointer; font-weight: 600; }
+.tenor-results { list-style: none; padding: 0; }
+.tenor-results li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: .75rem 0; border-bottom: 1px solid #cde1e7; }
+.tenor-selection { margin: 1rem 0; padding: 1rem; background: #e8f3f6; border-radius: .4rem; overflow-wrap: anywhere; }
+.tenor-person { margin: 1rem 0; }

@@ -25,7 +25,8 @@ async function mockApi(page: Page) {
     const url = new URL(route.request().url());
     const pathname = url.pathname;
     let data: unknown;
-    if (pathname === '/api/vendor/configuration') data = { defaultSystemId: systemId, environment: 'platform.tt02.altinn.no', presets: [{ id: 'basic', name: 'SmartBasic', resources: ['ske-krav-og-betalinger'] }] };
+    if (pathname === '/api/testdata/configuration') data = { enabled: true };
+    else if (pathname === '/api/vendor/configuration') data = { defaultSystemId: systemId, environment: 'platform.tt02.altinn.no', presets: [{ id: 'basic', name: 'SmartBasic', resources: ['ske-krav-og-betalinger'] }] };
     else if (pathname === '/api/vendor/systems') data = [{ ...system, id: undefined, systemId }, { ...system, id: undefined, systemId: '991825827_second', name: { nb: 'Annet system' } }];
     else if (pathname === '/api/vendor/systems/' + systemId) data = system;
     else if (pathname === '/api/vendor/systems/991825827_second') data = { ...system, id: '991825827_second', name: { nb: 'Annet system' } };
@@ -201,4 +202,116 @@ test('systemlistefeil viser Maskinporten-diagnose uten å påstå at listen er t
   await page.unroute('**/api/vendor/systems');
   await page.getByRole('button', { name: 'Prøv igjen' }).click();
   await expect(page.getByRole('heading', { name: 'Leverandørens systemer' })).toBeVisible();
+});
+
+const tenorOrganisation = { organisationNumber: '123456789', name: 'Syntetisk virksomhet', people: [
+  { nationalIdentityNumber: '12345678901', name: 'Syntetisk Testperson', roleCode: 'DAGL', roleName: 'Daglig leder' },
+], warning: null };
+
+async function mockTenor(page: Page) {
+  await page.route('**/api/testdata/organisations?*', route => route.fulfill({ json: { organisations: [tenorOrganisation], hasMore: false } }));
+  await page.route('**/api/testdata/organisations/123456789', route => route.fulfill({ json: tenorOrganisation }));
+}
+
+async function selectTenorOrganisation(page: Page) {
+  await page.getByText('Finn testvirksomhet i Tenor', { exact: true }).click();
+  await page.getByLabel('Virksomhetsnavn eller organisasjonsnummer').fill('Syntetisk');
+  await page.getByRole('button', { name: 'Søk i Tenor' }).click();
+  await page.getByRole('button', { name: 'Vis testperson for Syntetisk virksomhet' }).click();
+  await expect(page.getByText('Daglig leder: Syntetisk Testperson')).toBeVisible();
+  await page.getByRole('button', { name: 'Bruk virksomheten' }).click();
+}
+
+test('Tenor-valg fyller organisasjon og viser daglig leder ved godkjenningslenken', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await mockTenor(page);
+  let posted: Record<string, unknown> | undefined;
+  await page.route('**/api/vendor/requests/standard', route => {
+    posted = route.request().postDataJSON();
+    return route.fulfill({ json: { ...request, ...posted } });
+  });
+  await page.goto('/vendor/new');
+  await selectTenorOrganisation(page);
+  await expect(page.getByLabel('Organisasjonsnummer', { exact: true })).toHaveValue('123456789');
+  await page.getByRole('checkbox', { name: packageUrn, exact: true }).check();
+  await page.getByRole('button', { name: 'Opprett forespørsel', exact: true }).click();
+  await expect(page.getByRole('link', { name: 'Åpne godkjenning i Altinn' })).toBeVisible();
+  await expect(page.getByText('Daglig leder: Syntetisk Testperson')).toBeVisible();
+  await page.getByRole('button', { name: 'Kopier fødselsnummer' }).click();
+  await expect(page.getByText('Syntetisk fødselsnummer kopiert.')).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('12345678901');
+  expect(posted?.partyOrgNo).toBe('123456789');
+  expect(JSON.stringify(posted)).not.toContain('12345678901');
+  await page.screenshot({ path: 'test-results/tenor-confirmation.png', fullPage: true });
+});
+
+test('endret organisasjonsnummer fjerner valgt Tenor-testperson', async ({ page }) => {
+  await mockTenor(page);
+  await page.goto('/vendor/new');
+  await selectTenorOrganisation(page);
+  await page.getByText('Finn testvirksomhet i Tenor', { exact: true }).click();
+  await page.getByLabel('Organisasjonsnummer', { exact: true }).fill('987654321');
+  await expect(page.getByText('Daglig leder: Syntetisk Testperson')).not.toBeVisible();
+});
+
+test('Tenor-feil blokkerer ikke manuell agentforespørsel', async ({ page }) => {
+  await page.route('**/api/testdata/organisations?*', route => route.fulfill({ status: 502, json: {
+    title: 'Kunne ikke hente testdata fra Tenor', detail: 'Kontroller tilgang til skatteetaten:testnorge/testdata.read', service: 'Tenor',
+  } }));
+  await page.route('**/api/vendor/requests/agent', route => route.fulfill({ json: { ...request, ...route.request().postDataJSON() } }));
+  await page.goto('/vendor/new');
+  await page.getByText('Finn testvirksomhet i Tenor', { exact: true }).click();
+  await page.getByLabel('Virksomhetsnavn eller organisasjonsnummer').fill('Syntetisk');
+  await page.getByRole('button', { name: 'Søk i Tenor' }).click();
+  await expect(page.getByRole('alert')).toContainText('skatteetaten:testnorge/testdata.read');
+  await page.getByLabel('Systembrukertype').selectOption('agent');
+  await page.getByLabel('Organisasjonsnummer', { exact: true }).fill('123456789');
+  await page.getByRole('checkbox', { name: packageUrn, exact: true }).check();
+  await page.getByRole('button', { name: 'Opprett forespørsel', exact: true }).click();
+  await expect(page.getByRole('link', { name: 'Åpne godkjenning i Altinn' })).toBeVisible();
+});
+
+test('søker etter enkeltpersonforetak uten navn og velger innehaver', async ({ page }) => {
+  let searchUrl: URL | undefined;
+  await mockTenor(page);
+  await page.route('**/api/testdata/organisations?*', route => {
+    searchUrl = new URL(route.request().url());
+    return route.fulfill({ json: { organisations: [tenorOrganisation], hasMore: true } });
+  });
+  await page.route('**/api/testdata/organisations/123456789', route => route.fulfill({ json: {
+    ...tenorOrganisation, people: [{ ...tenorOrganisation.people[0], roleCode: 'INNH', roleName: 'Innehaver' }],
+  } }));
+  await page.goto('/vendor/new');
+  await page.getByText('Finn testvirksomhet i Tenor', { exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Søk i Tenor' })).toBeDisabled();
+  await page.getByLabel('Organisasjonsform', { exact: true }).selectOption('ENK');
+  await expect(page.getByLabel('Virksomhetsnavn eller organisasjonsnummer')).toHaveValue('');
+  await page.getByRole('button', { name: 'Søk i Tenor' }).click();
+  await page.getByRole('button', { name: 'Vis testperson for Syntetisk virksomhet' }).click();
+  expect(searchUrl?.searchParams.get('organisationForm')).toBe('ENK');
+  expect(searchUrl?.searchParams.has('term')).toBe(false);
+  await expect(page.getByText('Innehaver: Syntetisk Testperson')).toBeVisible();
+  await page.getByRole('button', { name: 'Bruk virksomheten' }).click();
+  await expect(page.getByLabel('Organisasjonsnummer', { exact: true })).toHaveValue('123456789');
+  await page.screenshot({ path: 'test-results/tenor-organisation-form.png', fullPage: true });
+});
+
+test('kombinerer navn og organisasjonsform og kan fjerne formfilteret', async ({ page }) => {
+  const searches: URL[] = [];
+  await page.route('**/api/testdata/organisations?*', route => {
+    searches.push(new URL(route.request().url()));
+    return route.fulfill({ json: { organisations: [], hasMore: false } });
+  });
+  await page.goto('/vendor/new');
+  await page.getByText('Finn testvirksomhet i Tenor', { exact: true }).click();
+  await page.getByLabel('Organisasjonsform', { exact: true }).selectOption('AS');
+  await page.getByLabel('Virksomhetsnavn eller organisasjonsnummer').fill('Syntetisk');
+  await page.getByRole('button', { name: 'Søk i Tenor' }).click();
+  await expect(page.getByText('0 virksomheter vist.')).toBeVisible();
+  expect(searches[0].searchParams.get('term')).toBe('Syntetisk');
+  expect(searches[0].searchParams.get('organisationForm')).toBe('AS');
+  await page.getByLabel('Organisasjonsform', { exact: true }).selectOption('');
+  await page.getByRole('button', { name: 'Søk i Tenor' }).click();
+  await expect.poll(() => searches.length).toBe(2);
+  expect(searches[1].searchParams.has('organisationForm')).toBe(false);
 });

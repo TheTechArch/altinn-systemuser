@@ -39,6 +39,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddMemoryCache();
     services.AddHttpClient<AltinnVendorClient>().ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
     services.AddHttpClient("metadata");
+    services.AddHttpClient<TenorClient>(client => client.Timeout = TimeSpan.FromSeconds(30)).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen();
