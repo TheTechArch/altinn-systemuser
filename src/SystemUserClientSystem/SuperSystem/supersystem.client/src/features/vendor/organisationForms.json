@@ -1,0 +1,178 @@
+[
+  {
+    "code": "ENK",
+    "name": "Enkeltpersonforetak"
+  },
+  {
+    "code": "AS",
+    "name": "Aksjeselskap"
+  },
+  {
+    "code": "ADOS",
+    "name": "Administrativ enhet - offentlig sektor"
+  },
+  {
+    "code": "ASA",
+    "name": "Allmennaksjeselskap"
+  },
+  {
+    "code": "BO",
+    "name": "Andre bo"
+  },
+  {
+    "code": "PERS",
+    "name": "Andre enkeltpersoner som registreres i tilknyttet register"
+  },
+  {
+    "code": "IKJP",
+    "name": "Andre ikke-juridiske personer"
+  },
+  {
+    "code": "ANNA",
+    "name": "Annen juridisk person"
+  },
+  {
+    "code": "SÆR",
+    "name": "Annet foretak iflg. særskilt lov"
+  },
+  {
+    "code": "DA",
+    "name": "Ansvarlig selskap med delt ansvar"
+  },
+  {
+    "code": "ANS",
+    "name": "Ansvarlig selskap med solidarisk ansvar"
+  },
+  {
+    "code": "BBL",
+    "name": "Boligbyggelag"
+  },
+  {
+    "code": "BRL",
+    "name": "Borettslag"
+  },
+  {
+    "code": "KIRK",
+    "name": "Den norske kirke"
+  },
+  {
+    "code": "ESEK",
+    "name": "Eierseksjonssameie"
+  },
+  {
+    "code": "SE",
+    "name": "Europeisk selskap"
+  },
+  {
+    "code": "EOFG",
+    "name": "Europeisk økonomisk foretaksgruppe"
+  },
+  {
+    "code": "FLI",
+    "name": "Forening/lag/innretning"
+  },
+  {
+    "code": "FKF",
+    "name": "Fylkeskommunalt foretak"
+  },
+  {
+    "code": "FYLK",
+    "name": "Fylkeskommune"
+  },
+  {
+    "code": "GFS",
+    "name": "Gjensidig forsikringsselskap"
+  },
+  {
+    "code": "IKS",
+    "name": "Interkommunalt selskap"
+  },
+  {
+    "code": "KS",
+    "name": "Kommandittselskap"
+  },
+  {
+    "code": "KF",
+    "name": "Kommunalt foretak"
+  },
+  {
+    "code": "KOMM",
+    "name": "Kommune"
+  },
+  {
+    "code": "KBO",
+    "name": "Konkursbo"
+  },
+  {
+    "code": "KTRF",
+    "name": "Kontorfellesskap"
+  },
+  {
+    "code": "NUF",
+    "name": "Norskregistrert utenlandsk foretak"
+  },
+  {
+    "code": "ORGL",
+    "name": "Organisasjonsledd"
+  },
+  {
+    "code": "PRE",
+    "name": "Partrederi"
+  },
+  {
+    "code": "PK",
+    "name": "Pensjonskasse"
+  },
+  {
+    "code": "SA",
+    "name": "Samvirkeforetak"
+  },
+  {
+    "code": "BA",
+    "name": "Selskap med begrenset ansvar"
+  },
+  {
+    "code": "SPA",
+    "name": "Sparebank"
+  },
+  {
+    "code": "STAT",
+    "name": "Staten"
+  },
+  {
+    "code": "SF",
+    "name": "Statsforetak"
+  },
+  {
+    "code": "STI",
+    "name": "Stiftelse"
+  },
+  {
+    "code": "OPMV",
+    "name": "Særskilt oppdelt enhet, jf. mval. § 2-2"
+  },
+  {
+    "code": "SAM",
+    "name": "Tingsrettslig sameie"
+  },
+  {
+    "code": "TVAM",
+    "name": "Tvangsregistrert for MVA"
+  },
+  {
+    "code": "AAFY",
+    "name": "Underenhet til ikke-næringsdrivende"
+  },
+  {
+    "code": "BEDR",
+    "name": "Underenhet til næringsdrivende og offentlig forvaltning"
+  },
+  {
+    "code": "UTLA",
+    "name": "Utenlandsk enhet"
+  },
+  {
+    "code": "VPFO",
+    "name": "Verdipapirfond"
+  }
+]

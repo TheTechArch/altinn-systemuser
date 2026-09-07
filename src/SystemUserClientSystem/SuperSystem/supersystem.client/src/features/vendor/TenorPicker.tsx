@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLoad } from './api';
 import { Notice } from './VendorLayout';
+import organisationForms from './organisationForms.json';
 
 interface TestOrganisation { organisationNumber: string; name: string }
 interface TestPerson { nationalIdentityNumber: string; name: string | null; roleCode: string; roleName: string }
@@ -37,22 +38,32 @@ function OrganisationDetails({ id, onSelect }: { id: string; onSelect: (value: T
 export function TenorPicker({ onSelect }: { onSelect: (value: TestOrganisationDetails) => void }) {
   const configuration = useLoad<{ enabled: boolean }>('/api/testdata/configuration');
   const [term, setTerm] = useState('');
+  const [organisationForm, setOrganisationForm] = useState('');
+  const canSearch = (term.trim().length >= 2 || !!organisationForm) && term.trim().length !== 1;
   const [searchUrl, setSearchUrl] = useState<string | null>(null);
   const [candidate, setCandidate] = useState('');
   const results = useLoad<{ organisations: TestOrganisation[]; hasMore: boolean }>(searchUrl);
   function search() {
-    if (term.trim().length < 2) return;
+    if (!canSearch) return;
     setCandidate('');
-    const url = `/api/testdata/organisations?term=${encodeURIComponent(term.trim())}`;
+    const params = new URLSearchParams();
+    if (term.trim()) params.set('term', term.trim());
+    if (organisationForm) params.set('organisationForm', organisationForm);
+    const url = `/api/testdata/organisations?${params}`;
     if (url === searchUrl) results.reload(); else setSearchUrl(url);
   }
   if (!configuration.error && !configuration.data?.enabled) return null;
   return <details className="tenor-picker"><summary>Finn testvirksomhet i Tenor</summary>
-    <p>Søk etter virksomhet og finn daglig leder som testperson. Innehaver vises dersom daglig leder mangler.</p>
+    <p>Søk med navn, organisasjonsnummer eller bare organisasjonsform og finn daglig leder som testperson. Innehaver vises dersom daglig leder mangler.</p>
     <Notice error={configuration.error} retry={configuration.reload} />
     {configuration.data?.enabled && <><label>Virksomhetsnavn eller organisasjonsnummer
       <input value={term} maxLength={100} onChange={e => setTerm(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); search(); } }} placeholder="Navn eller 9 siffer" /></label>
-      <button type="button" disabled={results.loading || term.trim().length < 2} onClick={search}>Søk i Tenor</button>
+      <label htmlFor="tenor-organisation-form">Organisasjonsform</label><select id="tenor-organisation-form" value={organisationForm} onChange={e => setOrganisationForm(e.target.value)}>
+        <option value="">Alle organisasjonsformer</option>
+        {organisationForms.map(form => <option key={form.code} value={form.code}>{form.name} ({form.code})</option>)}
+      </select>
+      <p>La navnefeltet stå tomt for å finne virksomheter med valgt organisasjonsform.</p>
+      <button type="button" disabled={results.loading || !canSearch} onClick={search}>Søk i Tenor</button>
       <Notice error={results.error} retry={results.reload} />
       {results.loading && <p role="status">Søker i Tenor …</p>}
       {results.data && <><p role="status">{results.data.organisations.length} virksomheter vist.{results.data.hasMore ? ' Flere treff finnes. Avgrens søket for å finne riktig virksomhet.' : ''}</p>

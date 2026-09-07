@@ -36,13 +36,22 @@ public class TenorClient(HttpClient client, IMaskinportenService tokens, IOption
             throw new TokenRequestException("invalid_response", "test", Scope);
     }
 
-    public async Task<TenorSearchResult> Search(string term, CancellationToken ct)
+    public async Task<TenorSearchResult> Search(string? term, CancellationToken ct, string? organisationForm = null)
     {
-        term = term.Trim();
-        if (term.Length is < 2 or > 100 || term.Any(char.IsControl)) throw new ValidationException("Skriv 2–100 tegn i virksomhetsnavnet eller et organisasjonsnummer.");
+        term = term?.Trim() ?? "";
+        organisationForm = organisationForm?.Trim().ToUpperInvariant() ?? "";
+        if (term.Length == 0 && organisationForm.Length == 0)
+            throw new ValidationException("Oppgi et navn, organisasjonsnummer eller velg organisasjonsform.");
+        if (term.Length == 1 || term.Length > 100 || term.Any(char.IsControl))
+            throw new ValidationException("Bruk 2–100 tegn i navnet, eller la feltet stå tomt og velg organisasjonsform.");
+        if (organisationForm.Length > 0 && !Regex.IsMatch(organisationForm, @"^[A-ZÆØÅ]{2,4}$"))
+            throw new ValidationException("Organisasjonsform må være en kode på 2–4 bokstaver, for eksempel ENK eller AS.");
         // Keep user input a literal KQL value, never a query supplied by the browser.
-        var kql = Regex.IsMatch(term, @"^[0-9]{9}$") ? $"organisasjonsnummer:{term}" : $"navn:{Quote(term)}";
-        var result = await SearchSource("brreg-er-fr", kql, 10, await Token(), ct);
+        var filters = new List<string>();
+        if (term.Length > 0)
+            filters.Add(Regex.IsMatch(term, @"^[0-9]{9}$") ? $"organisasjonsnummer:{term}" : $"navn:{Quote(term)}");
+        if (organisationForm.Length > 0) filters.Add($"organisasjonsform.kode:{Quote(organisationForm)}");
+        var result = await SearchSource("brreg-er-fr", string.Join(" AND ", filters), 10, await Token(), ct);
         return new(result.Documents.Select(Organisation).ToList(), result.HasMore);
     }
 

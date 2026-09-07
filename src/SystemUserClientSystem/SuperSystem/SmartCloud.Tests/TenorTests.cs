@@ -117,6 +117,36 @@ public class TenorTests
         await Assert.ThrowsAsync<TenorException>(() => client.Search("Test", default));
     }
 
+    [Theory]
+    [InlineData(null, "ENK", "organisasjonsform.kode:\"ENK\"")]
+    [InlineData("   ", "as", "organisasjonsform.kode:\"AS\"")]
+    [InlineData("Testbedrift", "NUF", "navn:\"Testbedrift\" AND organisasjonsform.kode:\"NUF\"")]
+    [InlineData("123456789", "ENK", "organisasjonsnummer:123456789 AND organisasjonsform.kode:\"ENK\"")]
+    public async Task OrganisationForm_CanBeUsedAloneOrCombined(string? term, string form, string expectedQuery)
+    {
+        var tokens = new Tokens();
+        var client = Client(request =>
+        {
+            Assert.Equal(expectedQuery, QueryHelpers.ParseQuery(request.RequestUri!.Query)["kql"]);
+            return Response(Result(Company()));
+        }, tokens);
+        Assert.Single((await client.Search(term, default, form)).Organisations);
+        Assert.Equal(TenorClient.Scope, tokens.LastScope);
+    }
+
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData(" ", " ")]
+    [InlineData(null, "ENK OR *")]
+    [InlineData(null, "AS\"")]
+    [InlineData("x", "ENK")]
+    public async Task InvalidFilters_FailBeforeTokenOrNetwork(string? term, string? form)
+    {
+        var tokens = new Tokens();
+        var client = Client(_ => throw new Exception("Must not call network"), tokens);
+        await Assert.ThrowsAsync<ValidationException>(() => client.Search(term, default, form));
+        Assert.Equal(0, tokens.Calls);
+    }
     private static TenorClient Client(Func<HttpRequestMessage, HttpResponseMessage> send, Tokens? tokens = null, string environment = "test", string platform = "https://platform.tt02.altinn.no") =>
         new(new HttpClient(new Handler(send)), tokens ?? new Tokens(), Options.Create(new MaskinportenConfig
         {

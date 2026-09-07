@@ -270,3 +270,48 @@ test('Tenor-feil blokkerer ikke manuell agentforespørsel', async ({ page }) => 
   await page.getByRole('button', { name: 'Opprett forespørsel', exact: true }).click();
   await expect(page.getByRole('link', { name: 'Åpne godkjenning i Altinn' })).toBeVisible();
 });
+
+test('søker etter enkeltpersonforetak uten navn og velger innehaver', async ({ page }) => {
+  let searchUrl: URL | undefined;
+  await mockTenor(page);
+  await page.route('**/api/testdata/organisations?*', route => {
+    searchUrl = new URL(route.request().url());
+    return route.fulfill({ json: { organisations: [tenorOrganisation], hasMore: true } });
+  });
+  await page.route('**/api/testdata/organisations/123456789', route => route.fulfill({ json: {
+    ...tenorOrganisation, people: [{ ...tenorOrganisation.people[0], roleCode: 'INNH', roleName: 'Innehaver' }],
+  } }));
+  await page.goto('/vendor/new');
+  await page.getByText('Finn testvirksomhet i Tenor', { exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Søk i Tenor' })).toBeDisabled();
+  await page.getByLabel('Organisasjonsform', { exact: true }).selectOption('ENK');
+  await expect(page.getByLabel('Virksomhetsnavn eller organisasjonsnummer')).toHaveValue('');
+  await page.getByRole('button', { name: 'Søk i Tenor' }).click();
+  await page.getByRole('button', { name: 'Vis testperson for Syntetisk virksomhet' }).click();
+  expect(searchUrl?.searchParams.get('organisationForm')).toBe('ENK');
+  expect(searchUrl?.searchParams.has('term')).toBe(false);
+  await expect(page.getByText('Innehaver: Syntetisk Testperson')).toBeVisible();
+  await page.getByRole('button', { name: 'Bruk virksomheten' }).click();
+  await expect(page.getByLabel('Organisasjonsnummer', { exact: true })).toHaveValue('123456789');
+  await page.screenshot({ path: 'test-results/tenor-organisation-form.png', fullPage: true });
+});
+
+test('kombinerer navn og organisasjonsform og kan fjerne formfilteret', async ({ page }) => {
+  const searches: URL[] = [];
+  await page.route('**/api/testdata/organisations?*', route => {
+    searches.push(new URL(route.request().url()));
+    return route.fulfill({ json: { organisations: [], hasMore: false } });
+  });
+  await page.goto('/vendor/new');
+  await page.getByText('Finn testvirksomhet i Tenor', { exact: true }).click();
+  await page.getByLabel('Organisasjonsform', { exact: true }).selectOption('AS');
+  await page.getByLabel('Virksomhetsnavn eller organisasjonsnummer').fill('Syntetisk');
+  await page.getByRole('button', { name: 'Søk i Tenor' }).click();
+  await expect(page.getByText('0 virksomheter vist.')).toBeVisible();
+  expect(searches[0].searchParams.get('term')).toBe('Syntetisk');
+  expect(searches[0].searchParams.get('organisationForm')).toBe('AS');
+  await page.getByLabel('Organisasjonsform', { exact: true }).selectOption('');
+  await page.getByRole('button', { name: 'Søk i Tenor' }).click();
+  await expect.poll(() => searches.length).toBe(2);
+  expect(searches[1].searchParams.has('organisationForm')).toBe(false);
+});

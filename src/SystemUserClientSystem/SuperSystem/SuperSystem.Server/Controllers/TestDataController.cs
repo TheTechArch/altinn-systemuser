@@ -13,9 +13,9 @@ public class TestDataController(TenorClient tenor) : ControllerBase
     public IActionResult Configuration() => Ok(new { enabled = tenor.Enabled });
 
     [HttpGet("organisations")]
-    public async Task<IActionResult> Search([FromQuery, Required, StringLength(100, MinimumLength = 2)] string term, CancellationToken ct)
+    public async Task<IActionResult> Search([FromQuery, StringLength(100)] string? term, [FromQuery, StringLength(4)] string? organisationForm, CancellationToken ct)
     {
-        try { return Ok(await tenor.Search(term, ct)); }
+        try { return Ok(await tenor.Search(term, ct, organisationForm)); }
         catch (ValidationException error) { return Problem(detail: error.Message, statusCode: 400); }
     }
 
