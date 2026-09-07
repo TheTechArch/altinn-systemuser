@@ -96,3 +96,5 @@
   .vendor-card { padding: 1.1rem; }
   .vendor-stats { grid-template-columns: 1fr; }
 }
+
+.vendor-error p { white-space: pre-line; overflow-wrap: anywhere; }

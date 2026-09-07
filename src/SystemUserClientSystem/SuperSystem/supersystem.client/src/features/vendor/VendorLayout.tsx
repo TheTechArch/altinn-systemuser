@@ -33,8 +33,8 @@ export function VendorLayout() {
       <span className="vendor-environment">{config.data?.environment || 'Henter miljø …'}</span></header>
     <div className="vendor-workspace"><aside className="vendor-sidebar">
       <label htmlFor="vendor-system">Registrert system</label>
-      <select id="vendor-system" value={systemId} onChange={e => setParams({ system: e.target.value })}>
-        {!systems.data?.length && <option value="">Ingen systemer</option>}
+      <select id="vendor-system" disabled={!systems.data?.length} value={systemId} onChange={e => setParams({ system: e.target.value })}>
+        {!systems.data?.length && <option value="">{systems.error ? 'Kunne ikke hente systemer' : systems.loading ? 'Henter systemer …' : 'Ingen systemer'}</option>}
         {systems.data?.map(s => <option key={s.systemId} value={s.systemId}>{localized(s.name) || s.systemId}</option>)}
       </select>
       <nav aria-label="Leverandør">

@@ -25,7 +25,7 @@ public class VendorController(AltinnVendorClient api, IMaskinportenService maski
     {
         var token = await maskinporten.GetToken(scope, null);
         return !string.IsNullOrWhiteSpace(token?.AccessToken) ? token.AccessToken :
-            throw new AltinnApiException(System.Net.HttpStatusCode.BadGateway, "Maskinporten returnerte ikke et tilgangstoken.");
+            throw new Altinn.ApiClients.Maskinporten.Models.TokenRequestException("Maskinporten returnerte ikke et tilgangstoken. Kontroller tokenresponsen fra tjenesten.");
     }
 
     [HttpGet("configuration")]

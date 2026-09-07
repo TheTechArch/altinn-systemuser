@@ -179,3 +179,26 @@ test('første system kan registreres når leverandørlisten er tom', async ({ pa
   await expect(page.getByLabel('System-ID', { exact: true })).toHaveValue('991825827_');
   await expect(page.getByRole('button', { name: 'Registrer system i Altinn' })).toBeVisible();
 });
+
+test('systemlistefeil viser Maskinporten-diagnose uten å påstå at listen er tom', async ({ page }) => {
+  await page.route('**/api/vendor/systems', route => route.fulfill({ status: 502, json: {
+    title: 'Kunne ikke hente tilgangstoken fra Maskinporten',
+    detail: 'Maskinporten avviste forespurt scope. Kontroller at scopet er registrert på integrasjonen.',
+    service: 'Maskinporten', code: 'invalid_scope', providerCode: 'MP-200', environment: 'test',
+    scope: 'altinn:authentication/systemregister.write', upstreamStatus: 400, traceId: 'diagnostic-trace',
+  } }));
+  await page.goto('/vendor/systems');
+  const alert = page.getByRole('alert');
+  await expect(alert).toContainText('Kontroller at scopet er registrert');
+  await expect(alert).toContainText('invalid_scope (MP-200)');
+  await expect(alert).toContainText('Forespurt scope: altinn:authentication/systemregister.write');
+  await expect(alert).toContainText('HTTP fra Maskinporten: 400');
+  await expect(alert).toContainText('diagnostic-trace');
+  await expect(page.getByLabel('Registrert system')).toBeDisabled();
+  await expect(page.getByLabel('Registrert system')).toContainText('Kunne ikke hente systemer');
+  await expect(page.getByText('Ingen systemer', { exact: true })).toHaveCount(0);
+  await page.screenshot({ path: 'test-results/vendor-error-diagnostics.png', fullPage: true });
+  await page.unroute('**/api/vendor/systems');
+  await page.getByRole('button', { name: 'Prøv igjen' }).click();
+  await expect(page.getByRole('heading', { name: 'Leverandørens systemer' })).toBeVisible();
+});

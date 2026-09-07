@@ -89,7 +89,7 @@ namespace Altinn.ApiClients.Maskinporten.Services
             TokenResponse? accesstokenResponse;
             string jwtAssertion = GetJwtAssertion(jwk, environment, clientId, scope, systemUserOrgno);
             FormUrlEncodedContent content = GetUrlEncodedContent(jwtAssertion);
-            accesstokenResponse = await PostToken(environment, content);
+            accesstokenResponse = await PostToken(environment, scope, content);
             return accesstokenResponse;
         }
 
@@ -175,35 +175,47 @@ namespace Altinn.ApiClients.Maskinporten.Services
         /// <param name="bearer"></param>
         /// <returns></returns>
         /// <exception cref="TokenRequestException"></exception>
-        private async Task<TokenResponse?> PostToken(string environment, FormUrlEncodedContent bearer)
+        private async Task<TokenResponse?> PostToken(string environment, string scope, FormUrlEncodedContent bearer)
         {
-            HttpRequestMessage requestMessage = new HttpRequestMessage()
+            using var request = new HttpRequestMessage(HttpMethod.Post, GetTokenEndpoint(environment)) { Content = bearer };
+            try
             {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri(GetTokenEndpoint(environment)),
-                Content = bearer
-            };
+                using var response = await _client.SendAsync(request);
+                var body = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    try
+                    {
+                        var token = JsonSerializer.Deserialize<TokenResponse>(body);
+                        if (!string.IsNullOrWhiteSpace(token?.AccessToken)) return token;
+                    }
+                    catch (JsonException) { }
+                    throw new TokenRequestException("invalid_response", environment, scope, (int)response.StatusCode);
+                }
 
-            HttpResponseMessage response = await _client.SendAsync(requestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string successResponse = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<TokenResponse>(successResponse);
+                // Only expose documented codes. Provider descriptions can contain identifiers or assertion data.
+                var code = "token_request_failed";
+                string? providerCode = null;
+                try
+                {
+                    var error = JsonSerializer.Deserialize<ErrorReponse>(body);
+                    if (error?.ErrorType is "invalid_scope" or "invalid_client" or "invalid_grant" or "invalid_request" or "unauthorized_client" or "access_denied" or "server_error" or "temporarily_unavailable")
+                        code = error.ErrorType;
+                    var match = System.Text.RegularExpressions.Regex.Match(error?.Description ?? "", @"\bMP-\d{3}\b");
+                    if (match.Success) providerCode = match.Value;
+                }
+                catch (JsonException) { code = "invalid_response"; }
+                throw new TokenRequestException(code, environment, scope, (int)response.StatusCode, providerCode);
             }
-            
-            string errorResponse = await response.Content.ReadAsStringAsync();
-            ErrorReponse error = JsonSerializer.Deserialize<ErrorReponse>(errorResponse) ?? new ErrorReponse()
+            catch (HttpRequestException)
             {
-                ErrorType = "deserializing",
-                Description = "Unable to deserialize error from Maskinporten. Received: " +
-                              (string.IsNullOrEmpty(errorResponse) ? "<empty>" : errorResponse)
-            };
-
-            Console.Write(error.ToString());
-            throw new TokenRequestException(error.Description);
+                throw new TokenRequestException("connection_failed", environment, scope);
+            }
+            catch (TaskCanceledException)
+            {
+                throw new TokenRequestException("timeout", environment, scope);
+            }
         }
-
         private string GetAssertionAud(string environment)
         {
             return environment switch

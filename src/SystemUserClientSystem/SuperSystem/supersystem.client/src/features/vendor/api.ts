@@ -41,10 +41,16 @@ export async function api<T>(url: string, init?: RequestInit): Promise<T> {
   try { data = text ? JSON.parse(text) : null; }
   catch { throw new Error(`Uventet svar fra serveren (HTTP ${response.status}).`); }
   if (!response.ok) {
-    const problem = data as { detail?: string; title?: string; errors?: unknown; validationErrors?: unknown; traceId?: string } | null;
-    throw new Error([`HTTP ${response.status}`, problem?.detail || problem?.title || 'Kallet feilet.',
+    const problem = data as { detail?: string; title?: string; errors?: unknown; validationErrors?: unknown; traceId?: string;
+      service?: string; code?: string; providerCode?: string; environment?: string; scope?: string; upstreamStatus?: number } | null;
+    throw new Error([problem?.title || 'Kallet feilet.', problem?.detail,
+      problem?.service ? `Tjeneste: ${problem.service}` : '',
+      problem?.code ? `Feilkode: ${problem.code}${problem.providerCode ? ` (${problem.providerCode})` : ''}` : '',
+      problem?.environment ? `Miljø: ${problem.environment}` : '',
+      problem?.scope ? `Forespurt scope: ${problem.scope}` : '',
+      `HTTP ${response.status}${problem?.upstreamStatus ? ` · HTTP fra ${problem.service || 'tjenesten'}: ${problem.upstreamStatus}` : ''}`,
       problem?.errors ? JSON.stringify(problem.errors) : '', problem?.validationErrors ? JSON.stringify(problem.validationErrors) : '',
-      problem?.traceId ? `Sporings-ID: ${problem.traceId}` : ''].filter(Boolean).join(' · '));
+      problem?.traceId ? `Sporings-ID: ${problem.traceId}` : ''].filter(Boolean).join('\n'));
   }
   return data as T;
 }

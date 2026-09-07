@@ -22,9 +22,46 @@ public class AltinnExceptionFilter(ILogger<AltinnExceptionFilter> logger) : IExc
             Title = "Kallet til Altinn eller Maskinporten feilet",
             Detail = "Kontroller konfigurasjon, tilganger og forespørselen, og prøv igjen.",
         };
-        if (exception is MaskinportenConfigurationException) problem.Detail = exception.Message;
+        if (exception is MaskinportenConfigurationException)
+        {
+            problem.Title = "Maskinporten er ikke konfigurert";
+            problem.Detail = exception.Message;
+            problem.Extensions["service"] = "Maskinporten";
+        }
+        if (exception is TokenRequestException token)
+        {
+            problem.Title = "Kunne ikke hente tilgangstoken fra Maskinporten";
+            problem.Detail = token.Message;
+            problem.Extensions["service"] = "Maskinporten";
+            problem.Extensions["code"] = token.Code;
+            problem.Extensions["providerCode"] = token.ProviderCode;
+            problem.Extensions["environment"] = token.Environment;
+            problem.Extensions["scope"] = token.Scope;
+            problem.Extensions["upstreamStatus"] = token.UpstreamStatus;
+        }
+        if (exception is HttpRequestException or TaskCanceledException)
+        {
+            problem.Title = "Kunne ikke nå Altinn";
+            problem.Extensions["service"] = "Altinn";
+        }
+        if (exception is HttpRequestException)
+            problem.Detail = "SmartCloud kunne ikke koble til Altinn. Kontroller DNS, TLS og utgående nettverkstilgang fra serveren.";
+        if (exception is TaskCanceledException)
+            problem.Detail = "Kallet til Altinn overskred tidsfristen. Prøv igjen og kontroller tjenestens driftsstatus.";
         if (exception is AltinnApiException altinn)
         {
+            problem.Title = "Kallet til Altinn feilet";
+            problem.Extensions["service"] = "Altinn";
+            if (altinn.SafeDetail is null) problem.Extensions["upstreamStatus"] = altinn.StatusCode;
+            problem.Detail = altinn.SafeDetail ?? (altinn.StatusCode switch
+            {
+                401 => "Altinn avviste tilgangstokenet. Kontroller at Maskinporten og Altinn bruker riktig miljø.",
+                403 => "Altinn avviste tilgangen. Kontroller tokenets scope og virksomhetens tilgang til dette API-et.",
+                404 => "Altinn fant ikke den forespurte ressursen. Kontroller system-ID og valgt miljø.",
+                429 => "Altinn har begrenset antall kall. Vent litt før du prøver igjen.",
+                >= 500 => "Altinn returnerte en serverfeil. Prøv igjen og kontroller tjenestens driftsstatus hvis feilen vedvarer.",
+                _ => "Altinn avviste forespørselen. Kontroller feltene og rettighetene i forespørselen."
+            });
             try
             {
                 using var document = JsonDocument.Parse(altinn.ResponseBody);
@@ -40,7 +77,11 @@ public class AltinnExceptionFilter(ILogger<AltinnExceptionFilter> logger) : IExc
             }
             catch (JsonException) { /* Never send HTML or token-provider responses to the browser. */ }
         }
-        logger.LogWarning("Upstream request failed with {ExceptionType}, HTTP {Status}", exception.GetType().Name, status);
+        if (exception is TokenRequestException tokenError)
+            logger.LogWarning("Maskinporten token request failed: {Code}, {ProviderCode}, upstream HTTP {UpstreamStatus}, environment {Environment}, scope {Scope}, trace {TraceId}",
+                tokenError.Code, tokenError.ProviderCode, tokenError.UpstreamStatus, tokenError.Environment, tokenError.Scope, context.HttpContext.TraceIdentifier);
+        else
+            logger.LogWarning("Upstream request failed with {ExceptionType}, HTTP {Status}, trace {TraceId}", exception.GetType().Name, status, context.HttpContext.TraceIdentifier);
         problem.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
         context.Result = new ObjectResult(problem) { StatusCode = status };
         context.ExceptionHandled = true;

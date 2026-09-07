@@ -90,6 +90,13 @@ Metadata bruker `/accessmanagement/api/v1/meta/info/accesspackages/search`, `urn
 - Tom ekstern referanse bruker organisasjonsnummeret. De eldre fagmodulene og demo-innloggingen er fortsatt organisasjonsnummerbaserte og velger ikke vilkårlig system/ekstern referanse ved tokenutstedelse.
 - Ingen ekte opprettelser, oppdateringer eller slettinger i TT02 inngår i testene.
 
+## Feilsøking av API-kall
+
+Feilpanelet skiller mellom feil ved tokenhenting i Maskinporten og avviste kall til Altinn. For Maskinporten vises OAuth-feilkode, eventuell MP-kode, miljø, forespurt scope og tjenestens HTTP-status. HTTP 502 fra SmartCloud kan for eksempel skyldes HTTP 400 fra Maskinporten; begge vises for å gjøre dette tydelig.
+
+Veiledningen er tilpasset kjente feilkoder, blant annet manglende scope, utløpt signeringsnøkkel og feil klientkonfigurasjon. Ukjente feil vises uten å gjette en bestemt årsak. Se [Digdirs feilsøkingsoversikt](https://docs.digdir.no/docs/Maskinporten/maskinporten_feilsoking) for kodene. Rå tokenresponser, signerte assertions og nøkler returneres ikke til nettleseren eller logges av denne feilhåndteringen.
+
+Bruk sporings-ID fra feilpanelet til å finne samme hendelse i serverloggen. Etter publisering av endringer i feilhåndteringen må siden lastes på nytt og kallet gjentas for å få den nye diagnosen. En mislykket systemliste vises som «Kunne ikke hente systemer», ikke som en tom liste.
 ## Verifisering
 
 ```powershell

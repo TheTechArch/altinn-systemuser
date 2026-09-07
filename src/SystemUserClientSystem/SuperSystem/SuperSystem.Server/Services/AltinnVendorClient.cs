@@ -22,7 +22,7 @@ public class AltinnVendorClient(HttpClient client, IOptions<SystemRegisterConfig
         if (!response.IsSuccessStatusCode) throw new AltinnApiException(response.StatusCode, text);
         if (string.IsNullOrWhiteSpace(text)) return JsonSerializer.SerializeToElement<object?>(null);
         try { using var document = JsonDocument.Parse(text); return document.RootElement.Clone(); }
-        catch (JsonException) { throw new AltinnApiException(HttpStatusCode.BadGateway, "Altinn returnerte et ugyldig JSON-svar."); }
+        catch (JsonException) { throw AltinnApiException.InvalidResponse("Altinn returnerte et ugyldig JSON-svar."); }
     }
 
     public async Task<List<JsonElement>> List(string path, string token, CancellationToken ct = default)
@@ -34,7 +34,7 @@ public class AltinnVendorClient(HttpClient client, IOptions<SystemRegisterConfig
         {
             var result = await Send(HttpMethod.Get, nextPath, token, ct: ct);
             if (result.ValueKind != JsonValueKind.Object || !result.TryGetProperty("data", out var data) || data.ValueKind != JsonValueKind.Array)
-                throw new AltinnApiException(HttpStatusCode.BadGateway, "Altinn returnerte et ugyldig listesvar.");
+                throw AltinnApiException.InvalidResponse("Altinn returnerte et ugyldig listesvar.");
             items.AddRange(data.EnumerateArray());
             if (!result.TryGetProperty("links", out var links) || !links.TryGetProperty("next", out var next) ||
                 next.ValueKind == JsonValueKind.Null || string.IsNullOrEmpty(next.GetString())) return items;
@@ -42,15 +42,17 @@ public class AltinnVendorClient(HttpClient client, IOptions<SystemRegisterConfig
             if (!Uri.TryCreate(BaseUri, next.GetString(), out var uri) ||
                 !QueryHelpers.ParseQuery(uri.Query).TryGetValue("token", out var continuation) ||
                 continuation.Count != 1 || string.IsNullOrEmpty(continuation[0]) || !seen.Add(continuation[0]!))
-                throw new AltinnApiException(HttpStatusCode.BadGateway, "Altinn returnerte en ugyldig eller gjentatt fortsettelsesmarkør.");
+                throw AltinnApiException.InvalidResponse("Altinn returnerte en ugyldig eller gjentatt fortsettelsesmarkør.");
             nextPath = QueryHelpers.AddQueryString(path, "token", continuation[0]!);
         }
-        throw new AltinnApiException(HttpStatusCode.BadGateway, "For mange sider fra Altinn. Listen ble ikke fullført.");
+        throw AltinnApiException.InvalidResponse("For mange sider fra Altinn. Listen ble ikke fullført.");
     }
 }
 
-public class AltinnApiException(HttpStatusCode status, string responseBody) : Exception("Altinn API-kallet feilet.")
+public class AltinnApiException(HttpStatusCode status, string responseBody, string? safeDetail = null) : Exception("Altinn API-kallet feilet.")
 {
+    public string? SafeDetail { get; } = safeDetail;
+    public static AltinnApiException InvalidResponse(string safeDetail) => new(HttpStatusCode.BadGateway, "", safeDetail);
     public int StatusCode { get; } = (int)status;
     public string ResponseBody { get; } = responseBody;
 }
