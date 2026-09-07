@@ -1,66 +1,25 @@
-import { useEffect } from 'react';
-import './Receipt.css';
-import './../../tailwind.css';
-import smartlogo from './../../assets/SmartCloudLogo.svg'; 
 import { Link } from 'react-router-dom';
+import { SystemRequest, RequestKind, query, useLoad } from '../vendor/api';
+import { JsonDetails, Notice, Status } from '../vendor/VendorLayout';
+import '../vendor/Vendor.css';
 
-import '@digdir/designsystemet-theme';
-import '@digdir/designsystemet-css';
-
-export const Receipt = () => {
-
-
-    useEffect(() => {
-    }, []);
-
-    return (
-        <div>
-            <div className="min-h-screen bg-gray-100">
-                {/* Hero Section */}
-                <header className="bg-smartcloud text-white">
-                    <div className="container mx-auto px-4 py-12 overflow-auto">
-                        <a href="/"><img src={smartlogo} alt="Smart Cloud Logo" className="w-auto mx-auto mb-2 inline h-28" /></a>
-                        <div className="float-right pt-16">
-                            <button className="text-white px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition mr-2">Logg inn</button>
-                            <button className="bg-white text-blue-600 px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Prøv gratis</button>
-                        </div>
-                    </div>
-                </header>
-                {/* Features Section */}
-                <section id="features" className="bg-white ">
-                    <div className="container mx-auto px-24 py-24">
-                        <div className="mb-12 bg-smartcloudbright shadow-lg py-8 h-96">
-                            <div className="text-center font-color-cloudblue">
-                                <h2 className="text-4xl font-semibold mb-2 text-center p-4">Da var systemtilgang i boks!</h2>
-                                <p>Systemtilgangen kan du enkelt se og administrere på altinn.no </p>
-
-                                <p>Da er alt klart for at du kan ta i bruk</p>
-
-                                <h3>SmartCloud</h3>
-
-                                <br />
-                                <Link to="/dashboard" className="text-white bg-smartcloudbluelight px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Gå til SmartCloud Dashboard</Link>
-                                </div>
-                            
-                        </div>
-                    </div>
-                </section>
-
-                {/* Call to Action Section */}
-                <section className="bg-smartcloud text-white py-12">
-                    <div className="container mx-auto px-4 text-center">
-                    </div>
-                </section>
-
-
-                {/* Footer */}
-                <footer className="bg-gray-800 text-white py-6">
-                    <div className="container mx-auto px-4 text-center">
-                        <p>&copy; {new Date().getFullYear()} SmartCloud AS. All rights reserved.</p>
-                    </div>
-                </footer>
-            </div>
-        </div>
-    );
+function pendingRequest(): { id: string; kind: RequestKind; systemId: string } | null {
+  try {
+    const value = JSON.parse(sessionStorage.getItem('smartcloud.pendingRequest') || 'null');
+    return value && typeof value.id === 'string' && typeof value.systemId === 'string' && ['standard', 'agent', 'change'].includes(value.kind) ? value : null;
+  } catch { return null; }
 }
-
+export const Receipt = () => {
+  const pending = pendingRequest();
+  const request = useLoad<SystemRequest>(pending ? `/api/vendor/requests/${pending.kind}/${encodeURIComponent(pending.id)}` : null);
+  return <div className="vendor-app"><main className="vendor-main vendor-receipt"><Link to="/">← SmartCloud</Link><h1>Status for systemtilgang</h1>
+    <p>Returen fra Altinn bekrefter ikke i seg selv at forespørselen er godkjent. Status under hentes fra API-et.</p>
+    <Notice {...request} retry={request.reload} />
+    {request.data && <section className="vendor-card"><Status value={request.data.status} timedOut={request.data.timedOut} />
+      <p>{request.data.integrationTitle || request.data.systemId} · {request.data.partyOrgNo}</p>
+      <button onClick={request.reload} disabled={request.loading}>Oppdater status</button>
+      <JsonDetails value={request.data} /></section>}
+    {!pending && <p>Ingen forespørsel er lagret i denne nettleserfanen. Åpne forespørselsoversikten for å kontrollere status.</p>}
+    <div className="vendor-actions"><Link to={`/vendor/requests${pending ? query(pending.systemId) + '&kind=' + pending.kind : ''}`}>Se forespørsler</Link><Link to="/dashboard">SmartCloud dashboard</Link></div>
+  </main></div>;
+};

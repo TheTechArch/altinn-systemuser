@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
@@ -19,6 +19,10 @@ namespace SmartCloud.Server.Models
         /// </summary>
         [JsonPropertyName("id")]
         public string Id { get; set; } = string.Empty;
+
+
+        public string ExternalRef { get; set; } = "";
+        public string UserType { get; set; } = "";
 
         /// <summary>
         /// The Title is by default the same as the System's Display Name

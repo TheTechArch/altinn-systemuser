@@ -21,6 +21,7 @@ export const Dashboard = () => {
                     <div className="container mx-auto px-4 py-12 overflow-auto">
                         <a href="/"><img src={smartlogo} alt="Smart Cloud Logo" className="w-auto mx-auto mb-2 inline h-28" /></a>
                         <div className="float-right pt-16">
+                            <Link to="/vendor/systems" className="text-white px-4 py-2 rounded-lg hover:bg-blue-500 mr-2">Systemer og systembrukere</Link>
                             <button className="text-white px-4 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition mr-2">Logg inn</button>
                             <button className="bg-white text-blue-600 px-4 py-2 rounded-3xl shadow-md hover:bg-blue-500 hover:text-white transition">Prøv gratis</button>
                         </div>
@@ -151,4 +152,3 @@ export const Dashboard = () => {
         </div>
     );
 }
-
